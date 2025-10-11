@@ -31,6 +31,10 @@ export interface Product {
   manage_stock: boolean
   low_stock_threshold?: number
 
+  // 物理属性
+  weight?: number
+  dimensions?: string
+
   // 图片信息
   featured_image?: string
   images?: string[]
@@ -47,9 +51,6 @@ export interface Product {
   // 分类关联
   category_id?: string
   category?: Category
-
-  // 权重和排序
-  sort_order?: number
 
   created_at: string
   updated_at: string

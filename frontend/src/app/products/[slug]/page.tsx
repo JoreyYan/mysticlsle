@@ -80,11 +80,11 @@ export default function ProductPage() {
   }
 
   const getCurrentComparePrice = () => {
-    return selectedVariant?.compare_at_price || product?.compare_at_price
+    return selectedVariant?.price || product?.sale_price
   }
 
   const getAvailableQuantity = () => {
-    return selectedVariant?.inventory_quantity || product?.inventory_quantity || 0
+    return selectedVariant?.inventory_quantity || product?.stock_quantity || 0
   }
 
   if (loading) {
