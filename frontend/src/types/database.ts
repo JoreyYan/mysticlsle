@@ -23,13 +23,13 @@ export interface Product {
 
   // 价格信息
   price: number
-  compare_at_price?: number
+  sale_price?: number
   cost_price?: number
 
   // 库存信息
-  inventory_quantity: number
-  track_inventory: boolean
-  allow_backorder: boolean
+  stock_quantity: number
+  manage_stock: boolean
+  low_stock_threshold?: number
 
   // 图片信息
   featured_image?: string
@@ -40,22 +40,34 @@ export interface Product {
   meta_description?: string
 
   // 状态信息
-  status: 'draft' | 'active' | 'archived'
+  is_active: boolean
   is_featured: boolean
+  is_digital: boolean
 
   // 分类关联
   category_id?: string
   category?: Category
 
   // 权重和排序
-  sort_order: number
+  sort_order?: number
 
   created_at: string
   updated_at: string
 
   // 关联数据
+  product_images?: ProductImage[]
   variants?: ProductVariant[]
   tags?: ProductTag[]
+}
+
+export interface ProductImage {
+  id: string
+  product_id: string
+  image_url: string
+  alt_text?: string
+  sort_order: number
+  is_primary: boolean
+  created_at: string
 }
 
 export interface ProductVariant {
