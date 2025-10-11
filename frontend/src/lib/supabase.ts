@@ -172,6 +172,7 @@ export type Database = {
 
 // API 函数
 const supabase = createClient()
+export { supabase }
 
 // 获取产品列表
 export const getProducts = async (limit = 20) => {
