@@ -1,0 +1,3 @@
+{
+  "customInstructions": "在这个项目中，前端开发必须使用 shadcn/ui 组件库。所有 UI 组件都应该从 shadcn/ui 导入和使用。"
+}

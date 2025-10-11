@@ -1,0 +1,10 @@
+# Netscape HTTP Cookie File
+# http://curl.haxx.se/rfc/cookie_spec.html
+# This is a generated file!  Do not edit.
+
+.chillfitrave.com	TRUE	/	TRUE	1759820996	__cf_bm	u6qos8SjmeEbt2rzxMGXznhxvIi7CLYd4RqLVl6qtj4-1759819196-1.0.1.1-SpS_y6DePyf6dNHQOvlzS_vILrfxZQ3relJsvr0CXSUA42x.SaS15B.nIrxg6j7EOQuZAq748NxtbK3lzMJ0wazd4hR3fCO0fXw_Kq9yIEY
+chillfitrave.com	FALSE	/	FALSE	0	user	brainiacs-chillfit
+.chillfitrave.com	TRUE	/	FALSE	1767595327	_fbp	fb.1.1759819205547.553235510275910300
+.chillfitrave.com	TRUE	/	FALSE	1794379328	_ga	GA1.1.1391941225.1759819209
+chillfitrave.com	FALSE	/	FALSE	1760424063	modalStatus	closed
+.chillfitrave.com	TRUE	/	FALSE	1794379328	_ga_VPNSBZ9Q00	GS2.1.s1759819208$o1$g1$t1759819327$j10$l0$h0

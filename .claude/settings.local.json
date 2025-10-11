@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:chillfitrave.com)",
+      "WebSearch",
+      "Bash(node:*)",
+      "Bash(npm:*)",
+      "Bash(docker:*)",
+      "Bash(curl:*)",
+      "WebFetch(domain:docs.docker.com)",
+      "Bash(wsl:*)",
+      "Bash(dir:*)",
+      "Read(//d/**)",
+      "Bash(npx create-next-app:*)",
+      "Bash(npx next@latest dev:*)",
+      "Bash(yarn --version)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(npx next dev:*)",
+      "Bash(./node_modules/.bin/next.cmd dev:*)",
+      "Bash(npx shadcn-ui:*)",
+      "Bash(npx shadcn@latest add:*)",
+      "Bash(copy:*)",
+      "WebFetch(domain:localhost)",
+      "Bash(cd:*)",
+      "Bash(wmic:*)",
+      "Bash(npx supabase db dump:*)",
+      "Bash(cat:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.*
+
+# Environment variables
+.env*
+!.env.example
+
+# Build outputs
+.next/
+out/
+build/
+dist/
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Misc
+.DS_Store
+*.pem
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Temporary files
+nul
+
+# Scraped data and cloned sites (contains API keys)
+chillfitrave-clone/
+case/
+chillfitrave.com_cookies.txt
+output/
