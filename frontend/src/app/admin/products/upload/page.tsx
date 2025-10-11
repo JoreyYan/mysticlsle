@@ -532,13 +532,13 @@ export default function ProductUploadPage() {
                   <div key={index} className="border border-gray-200 rounded-lg p-4">
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                       <Input
-                        placeholder={t.productUpload.colorPlaceholder}
+                        placeholder={t.productUpload.variantColorPlaceholder}
                         value={variant.option1_value}
                         onChange={(e) => updateVariant(index, 'option1_value', e.target.value)}
                         className="placeholder:text-gray-400"
                       />
                       <Input
-                        placeholder={t.productUpload.sizePlaceholder}
+                        placeholder={t.productUpload.variantSizePlaceholder}
                         value={variant.option2_value}
                         onChange={(e) => updateVariant(index, 'option2_value', e.target.value)}
                         className="placeholder:text-gray-400"
@@ -546,14 +546,14 @@ export default function ProductUploadPage() {
                       <Input
                         type="number"
                         step="0.01"
-                        placeholder={t.productUpload.pricePlaceholder}
+                        placeholder={t.productUpload.variantPricePlaceholder}
                         value={variant.price}
                         onChange={(e) => updateVariant(index, 'price', e.target.value)}
                         className="placeholder:text-gray-400"
                       />
                       <Input
                         type="number"
-                        placeholder={t.productUpload.inventoryPlaceholder}
+                        placeholder={t.productUpload.variantInventoryPlaceholder}
                         value={variant.inventory_quantity}
                         onChange={(e) => updateVariant(index, 'inventory_quantity', parseInt(e.target.value))}
                         className="placeholder:text-gray-400"
