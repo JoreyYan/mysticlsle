@@ -111,10 +111,10 @@ export const translations = {
       // 变体
       productVariants: '商品变体',
       enableVariants: '启用变体',
-      colorPlaceholder: '颜色',
-      sizePlaceholder: '尺码',
-      pricePlaceholder: '价格',
-      inventoryPlaceholder: '库存',
+      variantColorPlaceholder: '颜色',
+      variantSizePlaceholder: '尺码',
+      variantPricePlaceholder: '价格',
+      variantInventoryPlaceholder: '库存',
       remove: '移除',
       addVariant: '添加变体',
 
@@ -401,10 +401,10 @@ export const translations = {
       // Variants
       productVariants: 'Product Variants',
       enableVariants: 'Enable variants',
-      colorPlaceholder: 'Color',
-      sizePlaceholder: 'Size',
-      pricePlaceholder: 'Price',
-      inventoryPlaceholder: 'Inventory',
+      variantColorPlaceholder: 'Color',
+      variantSizePlaceholder: 'Size',
+      variantPricePlaceholder: 'Price',
+      variantInventoryPlaceholder: 'Inventory',
       remove: 'Remove',
       addVariant: 'Add Variant',
 
