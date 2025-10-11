@@ -8,8 +8,6 @@ const nextConfig = {
     workerThreads: false,
     cpus: 1,
     forceSwcTransforms: false,
-    // 减少内存使用
-    esmExternals: 'loose',
   },
   // 内存优化的webpack配置
   webpack: (config, { dev, isServer }) => {
