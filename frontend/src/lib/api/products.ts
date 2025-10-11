@@ -63,7 +63,7 @@ export class ProductService {
       return {
         data: data || [],
         error: error?.message || null,
-        count
+        count: count ?? undefined
       }
     } catch (error) {
       return {
