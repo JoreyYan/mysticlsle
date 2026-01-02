@@ -10,6 +10,7 @@ import { ArrowLeft, Plus, Star, Shirt, Scissors } from 'lucide-react'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { ImageUpload } from '@/components/ImageUpload'
 import { supabase } from '@/lib/supabase'
+import { InventoryTable } from '@/components/admin/InventoryTable'
 
 // 预定义常量
 const PREDEFINED_COLORS = [
@@ -23,8 +24,8 @@ const PREDEFINED_COLORS = [
   { label: 'Gold', value: 'Gold', hex: '#FFD700' },
 ]
 
-const SIZES_TOP = ['ONE SIZE', 'XXS', 'XS', 'S', 'M', 'L', 'XL']
-const SIZES_BOTTOM = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL']
+const SIZES_TOP = ['ONE SIZE', 'XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL']
+const SIZES_BOTTOM = ['ONE SIZE', 'XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL']
 
 interface ProductVariant {
   color: string
@@ -199,16 +200,19 @@ export default function ProductUploadPage() {
 
       // 3. Insert Variants
       if (finalVariants.length > 0 && product) {
-        await supabase.from('product_variants').insert(finalVariants.map((v, idx) => ({
+        const { error: vError } = await supabase.from('product_variants').insert(finalVariants.map((v, idx) => ({
           product_id: product.id,
+          title: `${color} / ${v.size} (${v.part})`, // Required title
           sku: `${sku || 'SKU'}-${v.part}-${v.size}`,
           price: v.price ? parseFloat(v.price) : parseFloat(price) || 0,
           inventory_quantity: v.inventory_quantity,
           option1_name: 'Color', option1_value: color,
           option2_name: 'Size', option2_value: v.size,
           part: v.part,
+          requires_shipping: true,
           sort_order: idx
         })))
+        if (vError) throw new Error(`Variant Insert Error: ${vError.message}`)
       }
 
       alert(t.productUpload.uploadSuccess)
@@ -219,79 +223,6 @@ export default function ProductUploadPage() {
       setLoading(false)
     }
   }
-
-  const InventoryTable = ({ variants, setVariants, title }: { variants: ProductVariant[], setVariants: any, title: string }) => {
-    let displayTitle = title;
-    if (title === 'Top') displayTitle = t.productUpload.topInventory;
-    if (title === 'Bottom') displayTitle = t.productUpload.bottomInventory;
-    if (title === 'Main') displayTitle = t.productUpload.mainInventory;
-
-    return (
-      <div className="mb-6">
-        <h3 className="text-sm font-bold text-gray-700 uppercase mb-3 flex items-center gap-2">
-          {title === 'Top' ? <Shirt className="w-4 h-4"/> : title === 'Bottom' ? <Scissors className="w-4 h-4"/> : null}
-          {displayTitle}
-        </h3>
-        <div className="overflow-x-auto border rounded-lg">
-          <table className="min-w-full text-sm">
-            <thead>
-              <tr className="bg-gray-50 border-b">
-                <th className="px-4 py-2 text-left w-24">{t.productUpload.size}</th>
-                <th className="px-4 py-2 text-left w-32">{t.productUpload.stock}</th>
-                <th className="px-4 py-2 text-left">{t.productUpload.priceOverride}</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y bg-white">
-              {variants.map((v, idx) => (
-                <tr key={idx}>
-                  <td className="px-4 py-3 font-medium text-gray-900 bg-gray-50/50">{v.size}</td>
-                  <td className="px-4 py-3">
-                    <Input 
-                      type="number" 
-                      value={v.inventory_quantity}
-                      onChange={e => {
-                        const newV = [...variants];
-                        newV[idx].inventory_quantity = parseInt(e.target.value) || 0;
-                        setVariants(newV);
-                      }}
-                      className={v.inventory_quantity > 0 ? "border-green-500 bg-green-50" : ""}
-                    />
-                  </td>
-                  <td className="px-4 py-3">
-                    <Input 
-                      type="number" 
-                      placeholder={`Default`}
-                      value={v.price}
-                      onChange={e => {
-                        const newV = [...variants];
-                        newV[idx].price = e.target.value;
-                        setVariants(newV);
-                      }}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    )
-  }
-
-  const updateImageUrl = (index: number, value: string) => {
-    const newUrls = [...imageUrls]
-    newUrls[index] = value
-    setImageUrls(newUrls)
-  }
-
-  const removeImageUrl = (index: number) => {
-    const newUrls = imageUrls.filter((_, i) => i !== index)
-    setImageUrls(newUrls.length ? newUrls : [''])
-    if (index === primaryImageIndex) setPrimaryImageIndex(0)
-    else if (index < primaryImageIndex) setPrimaryImageIndex(primaryImageIndex - 1)
-  }
-
-  const setPrimary = (index: number) => setPrimaryImageIndex(index)
 
   const PRODUCT_TYPES_TRANSLATED = [
     { label: t.productUpload.setType, value: 'set' },
@@ -324,19 +255,19 @@ export default function ProductUploadPage() {
                 <h2 className="text-lg font-semibold border-b pb-2">{t.productUpload.generalInfo}</h2>
                 <div>
                   <label className="block text-sm font-medium mb-1">{t.productUpload.productName} *</label>
-                  <Input value={name} onChange={e => setName(e.target.value)} required placeholder={t.productUpload.productNamePlaceholder} />
+                  <Input value={name} onChange={e => setName(e.target.value)} required placeholder={t.productUpload.productNamePlaceholder} className="placeholder:text-gray-300" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">{t.productUpload.sku}</label>
-                  <Input value={sku} onChange={e => setSku(e.target.value)} placeholder={t.productUpload.skuPlaceholder} />
+                  <Input value={sku} onChange={e => setSku(e.target.value)} placeholder={t.productUpload.skuPlaceholder} className="placeholder:text-gray-300" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">{t.productUpload.urlSlug}</label>
-                  <Input value={slug} onChange={e => setSlug(e.target.value)} placeholder={t.productUpload.urlSlugPlaceholder} />
+                  <Input value={slug} onChange={e => setSlug(e.target.value)} placeholder={t.productUpload.urlSlugPlaceholder} className="placeholder:text-gray-300" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">{t.productUpload.shortDescription}</label>
-                  <Input value={shortDescription} onChange={e => setShortDescription(e.target.value)} placeholder={t.productUpload.shortDescPlaceholder} />
+                  <Input value={shortDescription} onChange={e => setShortDescription(e.target.value)} placeholder={t.productUpload.shortDescPlaceholder} className="placeholder:text-gray-300" />
                 </div>
               </div>
 
@@ -395,7 +326,7 @@ export default function ProductUploadPage() {
                       }} onRemove={() => {
                         const newU = imageUrls.filter((_, i) => i !== idx); setImageUrls(newU.length ? newU : ['']);
                       }} folder="products" />
-                      <button type="button" onClick={() => setPrimary(idx)} className="mt-1 text-[10px] uppercase font-bold text-purple-600">
+                      <button type="button" onClick={() => setPrimaryImageIndex(idx)} className="mt-1 text-[10px] uppercase font-bold text-purple-600">
                         {primaryImageIndex === idx ? `★ ${t.productUpload.mainImage}` : t.productUpload.setPrimary}
                       </button>
                     </div>
@@ -442,15 +373,15 @@ export default function ProductUploadPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">{t.productUpload.comparePrice}</label>
-                  <Input type="number" step="0.01" value={comparePrice} onChange={e => setComparePrice(e.target.value)} placeholder="0.00" className="placeholder:text-gray-400" />
+                  <Input type="number" step="0.01" value={comparePrice} onChange={e => setComparePrice(e.target.value)} placeholder="0.00" className="placeholder:text-gray-300" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">{t.productUpload.costPrice}</label>
-                  <Input type="number" step="0.01" value={costPrice} onChange={e => setCostPrice(e.target.value)} placeholder="0.00" className="placeholder:text-gray-400" />
+                  <Input type="number" step="0.01" value={costPrice} onChange={e => setCostPrice(e.target.value)} placeholder="0.00" className="placeholder:text-gray-300" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">{t.productUpload.weight}</label>
-                  <Input type="number" step="0.01" value={weight} onChange={e => setWeight(e.target.value)} placeholder="0.00" className="placeholder:text-gray-400" />
+                  <Input type="number" step="0.01" value={weight} onChange={e => setWeight(e.target.value)} placeholder="0.00" className="placeholder:text-gray-300" />
                 </div>
                 
                 <div className="border-t pt-4 space-y-3">

@@ -10,6 +10,7 @@ import { ArrowLeft, Plus, ChevronUp, ChevronDown, Star, RefreshCw, Trash2, Shirt
 import { useLanguage } from '@/contexts/LanguageContext'
 import { ImageUpload } from '@/components/ImageUpload'
 import { supabase } from '@/lib/supabase'
+import { InventoryTable } from '@/components/admin/InventoryTable'
 
 // 预定义常量
 const PREDEFINED_COLORS = [
@@ -23,8 +24,8 @@ const PREDEFINED_COLORS = [
   { label: 'Gold', value: 'Gold', hex: '#FFD700' },
 ]
 
-const SIZES_TOP = ['ONE SIZE', 'XXS', 'XS', 'S', 'M', 'L', 'XL']
-const SIZES_BOTTOM = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL']
+const SIZES_TOP = ['ONE SIZE', 'XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL']
+const SIZES_BOTTOM = ['ONE SIZE', 'XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL']
 
 interface ProductVariant {
   id?: string
@@ -212,12 +213,35 @@ export default function ProductEditPage({ params }: PageProps) {
     setLoading(true)
 
     try {
+      // Determine which variants to save
       let finalVariants: ProductVariant[] = []
+      
+      // Safety check: regenerate if empty to ensure we save SOMETHING
       if (productType === 'set') {
-        finalVariants = [...variantsTop, ...variantsBottom]
+        if (variantsTop.length === 0) {
+           const newTop = SIZES_TOP.map(size => ({ color, size, price: '', inventory_quantity: 0, part: 'top' as const }))
+           finalVariants = [...finalVariants, ...newTop]
+        } else {
+           finalVariants = [...finalVariants, ...variantsTop]
+        }
+        
+        if (variantsBottom.length === 0) {
+           const newBottom = SIZES_BOTTOM.map(size => ({ color, size, price: '', inventory_quantity: 0, part: 'bottom' as const }))
+           finalVariants = [...finalVariants, ...newBottom]
+        } else {
+           finalVariants = [...finalVariants, ...variantsBottom]
+        }
       } else {
-        finalVariants = [...variantsMain]
+        if (variantsMain.length === 0) {
+           const targetSizes = productType === 'bottom' ? SIZES_BOTTOM : SIZES_TOP;
+           const newMain = targetSizes.map(size => ({ color, size, price: '', inventory_quantity: 0, part: 'main' as const }))
+           finalVariants = newMain
+        } else {
+           finalVariants = [...variantsMain]
+        }
       }
+
+      console.log('Submitting variants:', finalVariants)
 
       const totalStock = finalVariants.reduce((sum, v) => sum + (v.inventory_quantity || 0), 0)
 
@@ -250,94 +274,54 @@ export default function ProductEditPage({ params }: PageProps) {
 
       if (productError) throw productError
 
+      // 3. Update Images
       await supabase.from('product_images').delete().eq('product_id', productId)
       const validImages = imageUrls.filter(u => u.trim())
       if (validImages.length > 0) {
-        await supabase.from('product_images').insert(validImages.map((url, idx) => ({
-          product_id: productId, image_url: url, sort_order: idx, is_primary: idx === primaryImageIndex
-        })))
+        const { error: imgError } = await supabase.from('product_images').insert(
+          validImages.map((url, idx) => ({
+            product_id: productId, image_url: url, sort_order: idx, is_primary: idx === primaryImageIndex
+          }))
+        )
+        if (imgError) throw new Error(`Image Upload Error: ${imgError.message}`)
       }
 
+      // 4. Update Variants (CRITICAL FIX)
+      console.log('Final stage: Deleting old variants...')
       await supabase.from('product_variants').delete().eq('product_id', productId)
+      
       if (finalVariants.length > 0) {
-        await supabase.from('product_variants').insert(finalVariants.map((v, idx) => ({
-          product_id: productId,
-          sku: `${sku}-${v.part}-${v.size}`,
-          price: v.price ? parseFloat(v.price) : parseFloat(price),
-          inventory_quantity: v.inventory_quantity,
-          option1_name: 'Color', option1_value: color,
-          option2_name: 'Size', option2_value: v.size,
-          part: v.part,
-          sort_order: idx
-        })))
+        console.log('Inserting variants:', finalVariants)
+        const { data: vData, error: vError } = await supabase.from('product_variants').insert(
+          finalVariants.map((v, idx) => ({
+            product_id: productId,
+            title: `${color} / ${v.size} (${v.part})`,
+            sku: `${sku}-${v.part}-${v.size}`,
+            price: v.price ? parseFloat(v.price) : parseFloat(price),
+            inventory_quantity: v.inventory_quantity,
+            option1_name: 'Color', option1_value: color,
+            option2_name: 'Size', option2_value: v.size,
+            part: v.part,
+            sort_order: idx,
+            requires_shipping: true // Add explicitly
+          }))
+        ).select()
+
+        if (vError) {
+          console.error('Variant Insert Error:', vError)
+          throw new Error(`Variant Save Failed: ${vError.message} (${vError.details})`)
+        }
+        console.log('Variants saved successfully!', vData)
       }
 
       alert(t.productUpload.updateSuccess)
       router.push('/admin/dashboard')
     } catch (error: any) {
-      alert(`${t.productUpload.error} ${error.message}`)
+      console.error('CRITICAL SUBMIT ERROR:', error)
+      alert(`CRITICAL ERROR: ${error.message}`)
     } finally {
       setLoading(false)
     }
-  }
-
-  const InventoryTable = ({ variants, setVariants, title }: { variants: ProductVariant[], setVariants: any, title: string }) => {
-    // Translate title
-    let displayTitle = title;
-    if (title === 'Top') displayTitle = t.productUpload.topInventory;
-    if (title === 'Bottom') displayTitle = t.productUpload.bottomInventory;
-    if (title === 'Main') displayTitle = t.productUpload.mainInventory;
-
-    return (
-      <div className="mb-6">
-        <h3 className="text-sm font-bold text-gray-700 uppercase mb-3 flex items-center gap-2">
-          {title === 'Top' ? <Shirt className="w-4 h-4"/> : title === 'Bottom' ? <Scissors className="w-4 h-4"/> : null}
-          {displayTitle}
-        </h3>
-        <div className="overflow-x-auto border rounded-lg">
-          <table className="min-w-full text-sm">
-            <thead>
-              <tr className="bg-gray-50 border-b">
-                <th className="px-4 py-2 text-left w-24">{t.productUpload.size}</th>
-                <th className="px-4 py-2 text-left w-32">{t.productUpload.stock}</th>
-                <th className="px-4 py-2 text-left">{t.productUpload.priceOverride}</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y bg-white">
-              {variants.map((v, idx) => (
-                <tr key={idx}>
-                  <td className="px-4 py-3 font-medium text-gray-900 bg-gray-50/50">{v.size}</td>
-                  <td className="px-4 py-3">
-                    <Input 
-                      type="number" 
-                      value={v.inventory_quantity}
-                      onChange={e => {
-                        const newV = [...variants];
-                        newV[idx].inventory_quantity = parseInt(e.target.value) || 0;
-                        setVariants(newV);
-                      }}
-                      className={v.inventory_quantity > 0 ? "border-green-500 bg-green-50" : ""}
-                    />
-                  </td>
-                  <td className="px-4 py-3">
-                    <Input 
-                      type="number" 
-                      placeholder={`Default`}
-                      value={v.price}
-                      onChange={e => {
-                        const newV = [...variants];
-                        newV[idx].price = e.target.value;
-                        setVariants(newV);
-                      }}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    )
   }
 
   // --- UI Constants with Translation ---

@@ -89,17 +89,18 @@ export default function ProductPage() {
       setSelectedImage(initialImage)
 
       // Variants processing
+      console.log('Raw variants:', productData.variants) // Debug log
+
       if (productData.variants && productData.variants.length > 0) {
         if (productData.product_type === 'set') {
           const tops = productData.variants.filter((v: any) => v.part === 'top')
           const bottoms = productData.variants.filter((v: any) => v.part === 'bottom')
           
+          console.log('Top variants:', tops)
+          console.log('Bottom variants:', bottoms)
+
           setVariantsTop(tops)
           setVariantsBottom(bottoms)
-          
-          // Auto select first available
-          // setSelectedTop(tops.find(v => v.inventory_quantity > 0) || tops[0])
-          // setSelectedBottom(bottoms.find(v => v.inventory_quantity > 0) || bottoms[0])
         } else {
           // Regular product
           const mains = productData.variants.filter((v: any) => !v.part || v.part === 'main')

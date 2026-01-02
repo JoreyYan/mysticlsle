@@ -1,8 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(unset:*)",
-      "Bash(export NO_PROXY=\"*\")"
+      "Bash(timeout 5 cat:*)"
     ],
     "deny": [],
     "ask": []
