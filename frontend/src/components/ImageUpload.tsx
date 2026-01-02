@@ -1,13 +1,11 @@
 'use client'
 
 import { useState, useId } from 'react'
-import { createClient } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase'
 import { Upload, X, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useLanguage } from '@/contexts/LanguageContext'
 import Image from 'next/image'
-
-const supabase = createClient()
 
 interface ImageUploadProps {
   onImageUploaded: (url: string) => void

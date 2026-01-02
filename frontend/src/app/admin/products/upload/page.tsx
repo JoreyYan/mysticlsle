@@ -6,7 +6,7 @@ import { checkAdminSession, createClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import Link from 'next/link'
-import { ArrowLeft, Plus, Star } from 'lucide-react'
+import { ArrowLeft, Plus, Star, Shirt, Scissors } from 'lucide-react'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { ImageUpload } from '@/components/ImageUpload'
 import { supabase } from '@/lib/supabase'
@@ -26,19 +26,12 @@ const PREDEFINED_COLORS = [
 const SIZES_TOP = ['ONE SIZE', 'XXS', 'XS', 'S', 'M', 'L', 'XL']
 const SIZES_BOTTOM = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL']
 
-const PRODUCT_TYPES = [
-  { label: 'Set (Top + Bottom)', value: 'set' },
-  { label: 'Top', value: 'top' },
-  { label: 'Bottom', value: 'bottom' },
-  { label: 'Accessory', value: 'accessory' },
-  { label: 'Other', value: 'other' },
-]
-
 interface ProductVariant {
   color: string
   size: string
   price: string
   inventory_quantity: number
+  part: 'main' | 'top' | 'bottom'
 }
 
 export default function ProductUploadPage() {
@@ -52,10 +45,16 @@ export default function ProductUploadPage() {
   const [name, setName] = useState('')
   const [slug, setSlug] = useState('')
   const [sku, setSku] = useState('')
-  const [description, setDescription] = useState('')
   const [shortDescription, setShortDescription] = useState('')
   const [categoryId, setCategoryId] = useState('')
   
+  // --- 详细描述 (JSONB) ---
+  const [detailDesign, setDetailDesign] = useState('')
+  const [detailShipping, setDetailShipping] = useState('')
+  const [detailFabric, setDetailFabric] = useState('')
+  const [detailCraftsmanship, setDetailCraftsmanship] = useState('')
+  const [detailCaring, setDetailCaring] = useState('')
+
   // --- 属性 ---
   const [productType, setProductType] = useState('set')
   const [color, setColor] = useState('Black')
@@ -68,13 +67,16 @@ export default function ProductUploadPage() {
   const [trackInventory, setTrackInventory] = useState(true)
   const [status, setStatus] = useState<'draft' | 'active' | 'archived'>('active')
   const [isFeatured, setIsFeatured] = useState(false)
+  const [isFinalSale, setIsFinalSale] = useState(false)
 
   // --- 图片 ---
   const [imageUrls, setImageUrls] = useState<string[]>([''])
   const [primaryImageIndex, setPrimaryImageIndex] = useState(0)
 
   // --- 变体 (库存) ---
-  const [variants, setVariants] = useState<ProductVariant[]>([])
+  const [variantsMain, setVariantsMain] = useState<ProductVariant[]>([])
+  const [variantsTop, setVariantsTop] = useState<ProductVariant[]>([])
+  const [variantsBottom, setVariantsBottom] = useState<ProductVariant[]>([])
 
   useEffect(() => {
     if (!checkAdminSession()) {
@@ -84,21 +86,48 @@ export default function ProductUploadPage() {
     loadCategories()
   }, [router])
 
-  // 自动根据 Type 和 Color 初始化变体
+  // 核心逻辑：根据 Type 和 Color 初始化变体表格
   useEffect(() => {
-    const targetSizes = productType === 'bottom' ? SIZES_BOTTOM : SIZES_TOP;
-    
-    const newVariants = targetSizes.map(size => {
-      const existing = variants.find(v => v.size === size);
-      return {
-        color: color,
-        size: size,
-        price: existing?.price || '',
-        inventory_quantity: existing?.inventory_quantity || 0
-      };
-    });
-    
-    setVariants(newVariants);
+    if (productType === 'set') {
+      const newTop = SIZES_TOP.map(size => {
+        const existing = variantsTop.find(v => v.size === size);
+        return {
+          color: color,
+          size: size,
+          price: existing?.price || '',
+          inventory_quantity: existing?.inventory_quantity || 0,
+          part: 'top' as const
+        };
+      });
+      const newBottom = SIZES_BOTTOM.map(size => {
+        const existing = variantsBottom.find(v => v.size === size);
+        return {
+          color: color,
+          size: size,
+          price: existing?.price || '',
+          inventory_quantity: existing?.inventory_quantity || 0,
+          part: 'bottom' as const
+        };
+      });
+
+      if (JSON.stringify(newTop) !== JSON.stringify(variantsTop)) setVariantsTop(newTop);
+      if (JSON.stringify(newBottom) !== JSON.stringify(variantsBottom)) setVariantsBottom(newBottom);
+      
+    } else {
+      const targetSizes = productType === 'bottom' ? SIZES_BOTTOM : SIZES_TOP;
+      const newMain = targetSizes.map(size => {
+        const existing = variantsMain.find(v => v.size === size);
+        return {
+          color: color,
+          size: size,
+          price: existing?.price || '',
+          inventory_quantity: existing?.inventory_quantity || 0,
+          part: 'main' as const
+        };
+      });
+
+      if (JSON.stringify(newMain) !== JSON.stringify(variantsMain)) setVariantsMain(newMain);
+    }
   }, [productType, color]);
 
   const loadCategories = async () => {
@@ -121,11 +150,29 @@ export default function ProductUploadPage() {
 
     try {
       const finalSlug = slug.trim() || generateSlug(name)
-      const totalStock = variants.reduce((sum, v) => sum + (v.inventory_quantity || 0), 0)
+      
+      let finalVariants: ProductVariant[] = []
+      if (productType === 'set') {
+        finalVariants = [...variantsTop, ...variantsBottom]
+      } else {
+        finalVariants = [...variantsMain]
+      }
+
+      const totalStock = finalVariants.reduce((sum, v) => sum + (v.inventory_quantity || 0), 0)
+
+      const details = {
+        design: detailDesign,
+        shipping: detailShipping,
+        fabric: detailFabric,
+        craftsmanship: detailCraftsmanship,
+        caring: detailCaring
+      }
 
       // 1. Insert Product
       const { data: product, error: productError } = await supabase.from('products').insert({
-        name, slug: finalSlug, sku, description, short_description: shortDescription,
+        name, slug: finalSlug, sku, 
+        short_description: shortDescription,
+        details: details, description: detailDesign,
         category_id: categoryId || null,
         price: parseFloat(price) || 0,
         sale_price: comparePrice ? parseFloat(comparePrice) : null,
@@ -137,6 +184,7 @@ export default function ProductUploadPage() {
         manage_stock: trackInventory,
         is_active: status === 'active',
         is_featured: isFeatured,
+        is_final_sale: isFinalSale,
       }).select().single()
 
       if (productError) throw productError
@@ -150,25 +198,84 @@ export default function ProductUploadPage() {
       }
 
       // 3. Insert Variants
-      if (variants.length > 0 && product) {
-        await supabase.from('product_variants').insert(variants.map((v, idx) => ({
+      if (finalVariants.length > 0 && product) {
+        await supabase.from('product_variants').insert(finalVariants.map((v, idx) => ({
           product_id: product.id,
-          sku: `${sku || 'SKU'}-${v.size}`,
+          sku: `${sku || 'SKU'}-${v.part}-${v.size}`,
           price: v.price ? parseFloat(v.price) : parseFloat(price) || 0,
           inventory_quantity: v.inventory_quantity,
           option1_name: 'Color', option1_value: color,
           option2_name: 'Size', option2_value: v.size,
+          part: v.part,
           sort_order: idx
         })))
       }
 
-      alert('Product created successfully!')
+      alert(t.productUpload.uploadSuccess)
       router.push('/admin/dashboard')
     } catch (error: any) {
-      alert(`Upload failed: ${error.message}`)
+      alert(`${t.productUpload.error} ${error.message}`)
     } finally {
       setLoading(false)
     }
+  }
+
+  const InventoryTable = ({ variants, setVariants, title }: { variants: ProductVariant[], setVariants: any, title: string }) => {
+    let displayTitle = title;
+    if (title === 'Top') displayTitle = t.productUpload.topInventory;
+    if (title === 'Bottom') displayTitle = t.productUpload.bottomInventory;
+    if (title === 'Main') displayTitle = t.productUpload.mainInventory;
+
+    return (
+      <div className="mb-6">
+        <h3 className="text-sm font-bold text-gray-700 uppercase mb-3 flex items-center gap-2">
+          {title === 'Top' ? <Shirt className="w-4 h-4"/> : title === 'Bottom' ? <Scissors className="w-4 h-4"/> : null}
+          {displayTitle}
+        </h3>
+        <div className="overflow-x-auto border rounded-lg">
+          <table className="min-w-full text-sm">
+            <thead>
+              <tr className="bg-gray-50 border-b">
+                <th className="px-4 py-2 text-left w-24">{t.productUpload.size}</th>
+                <th className="px-4 py-2 text-left w-32">{t.productUpload.stock}</th>
+                <th className="px-4 py-2 text-left">{t.productUpload.priceOverride}</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y bg-white">
+              {variants.map((v, idx) => (
+                <tr key={idx}>
+                  <td className="px-4 py-3 font-medium text-gray-900 bg-gray-50/50">{v.size}</td>
+                  <td className="px-4 py-3">
+                    <Input 
+                      type="number" 
+                      value={v.inventory_quantity}
+                      onChange={e => {
+                        const newV = [...variants];
+                        newV[idx].inventory_quantity = parseInt(e.target.value) || 0;
+                        setVariants(newV);
+                      }}
+                      className={v.inventory_quantity > 0 ? "border-green-500 bg-green-50" : ""}
+                    />
+                  </td>
+                  <td className="px-4 py-3">
+                    <Input 
+                      type="number" 
+                      placeholder={`Default`}
+                      value={v.price}
+                      onChange={e => {
+                        const newV = [...variants];
+                        newV[idx].price = e.target.value;
+                        setVariants(newV);
+                      }}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )
   }
 
   const updateImageUrl = (index: number, value: string) => {
@@ -184,100 +291,138 @@ export default function ProductUploadPage() {
     else if (index < primaryImageIndex) setPrimaryImageIndex(primaryImageIndex - 1)
   }
 
+  const setPrimary = (index: number) => setPrimaryImageIndex(index)
+
+  const PRODUCT_TYPES_TRANSLATED = [
+    { label: t.productUpload.setType, value: 'set' },
+    { label: 'Top', value: 'top' },
+    { label: 'Bottom', value: 'bottom' },
+    { label: 'Accessory', value: 'accessory' },
+    { label: 'Other', value: 'other' },
+  ]
+
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
-      <div className="max-w-5xl mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="mb-6 flex justify-between items-center">
           <div>
             <Link href="/admin/dashboard" className="text-sm text-gray-500 hover:text-gray-700 flex items-center mb-2">
-              <ArrowLeft className="h-4 w-4 mr-1" /> Back to Dashboard
+              <ArrowLeft className="h-4 w-4 mr-1" /> {t.productUpload.backToDashboard}
             </Link>
-            <h1 className="text-3xl font-bold text-gray-900">Upload New Product</h1>
+            <h1 className="text-3xl font-bold text-gray-900">{t.productUpload.title}</h1>
           </div>
-          <Button onClick={handleSubmit} disabled={loading} className="bg-gradient-to-r from-purple-600 to-pink-600 h-12 px-8">
-            {loading ? 'Publishing...' : 'Publish Product'}
+          <Button onClick={handleSubmit} disabled={loading} className="bg-gradient-to-r from-purple-600 to-pink-600 h-12 px-8 shadow-sm">
+            {loading ? t.productUpload.creating : t.productUpload.createProduct}
           </Button>
         </div>
 
         <form className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
-            <div className="lg:col-span-2 space-y-6">
-              <div className="bg-white rounded-lg shadow p-6 space-y-4">
-                <h2 className="text-lg font-semibold border-b pb-2">General Information</h2>
+            <div className="lg:col-span-2 space-y-8">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-4">
+                <h2 className="text-lg font-semibold border-b pb-2">{t.productUpload.generalInfo}</h2>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Product Name *</label>
-                  <Input value={name} onChange={e => setName(e.target.value)} required placeholder="Enter product name" />
+                  <label className="block text-sm font-medium mb-1">{t.productUpload.productName} *</label>
+                  <Input value={name} onChange={e => setName(e.target.value)} required placeholder={t.productUpload.productNamePlaceholder} />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">SKU</label>
-                  <Input value={sku} onChange={e => setSku(e.target.value)} placeholder="e.g. CFR-NDT-001" />
+                  <label className="block text-sm font-medium mb-1">{t.productUpload.sku}</label>
+                  <Input value={sku} onChange={e => setSku(e.target.value)} placeholder={t.productUpload.skuPlaceholder} />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">URL Slug</label>
-                  <Input value={slug} onChange={e => setSlug(e.target.value)} placeholder="auto-generated if empty" />
+                  <label className="block text-sm font-medium mb-1">{t.productUpload.urlSlug}</label>
+                  <Input value={slug} onChange={e => setSlug(e.target.value)} placeholder={t.productUpload.urlSlugPlaceholder} />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Short Description</label>
-                  <Input value={shortDescription} onChange={e => setShortDescription(e.target.value)} placeholder="One line description" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Full Description</label>
-                  <textarea className="w-full p-2 border border-gray-200 rounded-md text-sm" rows={6} value={description} onChange={e => setDescription(e.target.value)} />
+                  <label className="block text-sm font-medium mb-1">{t.productUpload.shortDescription}</label>
+                  <Input value={shortDescription} onChange={e => setShortDescription(e.target.value)} placeholder={t.productUpload.shortDescPlaceholder} />
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow p-6 space-y-4">
-                <h2 className="text-lg font-semibold border-b pb-2">Inventory by Size</h2>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full text-sm">
-                    <thead>
-                      <tr className="bg-gray-50">
-                        <th className="px-4 py-2 text-left">Size</th>
-                        <th className="px-4 py-2 text-left w-32">Stock</th>
-                        <th className="px-4 py-2 text-left">Price Override</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y">
-                      {variants.map((v, idx) => (
-                        <tr key={idx}>
-                          <td className="px-4 py-3 font-medium text-gray-700">{v.size}</td>
-                          <td className="px-4 py-3">
-                            <Input type="number" value={v.inventory_quantity} onChange={e => {
-                                const newV = [...variants]; newV[idx].inventory_quantity = parseInt(e.target.value) || 0; setVariants(newV);
-                            }} />
-                          </td>
-                          <td className="px-4 py-3">
-                            <Input type="number" placeholder={price || '0.00'} value={v.price} onChange={e => {
-                                const newV = [...variants]; newV[idx].price = e.target.value; setVariants(newV);
-                            }} />
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+              {/* Detailed Information Sections */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-4">
+                <h2 className="text-lg font-semibold border-b pb-2">{t.productUpload.detailedInfo}</h2>
+                {['DESIGN', 'SHIPPING', 'FIT & FABRIC', 'CRAFTMANSHIP', 'CARING'].map(section => (
+                    <div key={section}>
+                      <label className="block text-xs font-bold text-gray-500 mb-1">{section}</label>
+                      <textarea 
+                        className="w-full p-2 border border-gray-200 rounded-md text-sm min-h-[80px] placeholder:text-gray-300" 
+                        placeholder={
+                          section === 'DESIGN' ? t.productUpload.designPlaceholder :
+                          section === 'SHIPPING' ? t.productUpload.shippingPlaceholder :
+                          section === 'FIT & FABRIC' ? t.productUpload.fitFabricPlaceholder :
+                          section === 'CRAFTMANSHIP' ? t.productUpload.craftsmanshipPlaceholder : t.productUpload.caringPlaceholder
+                        }
+                        onChange={e => {
+                          const val = e.target.value;
+                          if (section === 'DESIGN') setDetailDesign(val);
+                          else if (section === 'SHIPPING') setDetailShipping(val);
+                          else if (section === 'FIT & FABRIC') setDetailFabric(val);
+                          else if (section === 'CRAFTMANSHIP') setDetailCraftsmanship(val);
+                          else setDetailCaring(val);
+                        }}
+                      />
+                    </div>
+                  ))}
+              </div>
+
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h2 className="text-lg font-semibold border-b pb-4 mb-4 flex items-center justify-between">
+                  <span>{t.productUpload.inventoryManagement}</span>
+                </h2>
+                {productType === 'set' ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <InventoryTable title="Top" variants={variantsTop} setVariants={setVariantsTop} />
+                    <InventoryTable title="Bottom" variants={variantsBottom} setVariants={setVariantsBottom} />
+                  </div>
+                ) : (
+                  <InventoryTable title="Main" variants={variantsMain} setVariants={setVariantsMain} />
+                )}
               </div>
             </div>
 
+            {/* Right Column */}
             <div className="space-y-6">
-              <div className="bg-white rounded-lg shadow p-6 space-y-4">
-                <h2 className="text-lg font-semibold border-b pb-2">Attributes</h2>
+              {/* Image Section is NOW AT TOP */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h2 className="text-lg font-semibold border-b pb-2 mb-4">{t.productUpload.productImages}</h2>
+                <div className="space-y-4">
+                  {imageUrls.map((url, idx) => (
+                    <div key={idx} className={`border p-2 rounded relative ${primaryImageIndex === idx ? 'border-purple-500 bg-purple-50' : ''}`}>
+                      <ImageUpload existingUrl={url} onImageUploaded={u => {
+                        const newU = [...imageUrls]; newU[idx] = u; setImageUrls(newU);
+                      }} onRemove={() => {
+                        const newU = imageUrls.filter((_, i) => i !== idx); setImageUrls(newU.length ? newU : ['']);
+                      }} folder="products" />
+                      <button type="button" onClick={() => setPrimary(idx)} className="mt-1 text-[10px] uppercase font-bold text-purple-600">
+                        {primaryImageIndex === idx ? `★ ${t.productUpload.mainImage}` : t.productUpload.setPrimary}
+                      </button>
+                    </div>
+                  ))}
+                  <Button type="button" variant="outline" className="w-full text-xs" onClick={() => setImageUrls([...imageUrls, ''])}>
+                    <Plus className="mr-2 h-3 w-3" /> {t.productUpload.addImage}
+                  </Button>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-4">
+                <h2 className="text-lg font-semibold border-b pb-2">{t.productUpload.attributes}</h2>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Category</label>
+                  <label className="block text-sm font-medium mb-1">{t.productUpload.category}</label>
                   <select className="w-full h-10 border rounded-md px-2 text-sm" value={categoryId} onChange={e => setCategoryId(e.target.value)}>
-                    <option value="">None</option>
+                    <option value="">{t.productUpload.selectCategory}</option>
                     {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Type</label>
-                  <select className="w-full h-10 border rounded-md px-2 text-sm" value={productType} onChange={e => setProductType(e.target.value)}>
-                    {PRODUCT_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                  <label className="block text-sm font-medium mb-1">{t.productUpload.type}</label>
+                  <select className="w-full h-10 border rounded-md px-2 text-sm bg-purple-50 border-purple-200" value={productType} onChange={e => setProductType(e.target.value)}>
+                    {PRODUCT_TYPES_TRANSLATED.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2">Color</label>
+                  <label className="block text-sm font-medium mb-2">{t.productUpload.color}</label>
                   <div className="grid grid-cols-4 gap-2">
                     {PREDEFINED_COLORS.map(c => (
                       <button key={c.value} type="button" onClick={() => setColor(c.value)} className={`w-full aspect-square rounded-md border-2 transition-all flex flex-col items-center justify-center gap-1 ${color === c.value ? 'border-purple-600 bg-purple-50' : 'border-gray-100 hover:border-gray-200'}`}>
@@ -289,48 +434,34 @@ export default function ProductUploadPage() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow p-6 space-y-4">
-                <h2 className="text-lg font-semibold border-b pb-2">Pricing</h2>
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-4">
+                <h2 className="text-lg font-semibold border-b pb-2">{t.productUpload.pricingLogistics}</h2>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Main Price ($) *</label>
+                  <label className="block text-sm font-medium mb-1">{t.productUpload.mainPrice}</label>
                   <Input type="number" step="0.01" value={price} onChange={e => setPrice(e.target.value)} required />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Compare at Price ($)</label>
-                  <Input type="number" step="0.01" value={comparePrice} onChange={e => setComparePrice(e.target.value)} />
+                  <label className="block text-sm font-medium mb-1">{t.productUpload.comparePrice}</label>
+                  <Input type="number" step="0.01" value={comparePrice} onChange={e => setComparePrice(e.target.value)} placeholder="0.00" className="placeholder:text-gray-400" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Cost Price ($)</label>
-                  <Input type="number" step="0.01" value={costPrice} onChange={e => setCostPrice(e.target.value)} />
+                  <label className="block text-sm font-medium mb-1">{t.productUpload.costPrice}</label>
+                  <Input type="number" step="0.01" value={costPrice} onChange={e => setCostPrice(e.target.value)} placeholder="0.00" className="placeholder:text-gray-400" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Weight (kg)</label>
-                  <Input type="number" step="0.01" value={weight} onChange={e => setWeight(e.target.value)} />
+                  <label className="block text-sm font-medium mb-1">{t.productUpload.weight}</label>
+                  <Input type="number" step="0.01" value={weight} onChange={e => setWeight(e.target.value)} placeholder="0.00" className="placeholder:text-gray-400" />
                 </div>
-                <div className="flex items-center gap-2 pt-2">
-                  <input type="checkbox" checked={isFeatured} onChange={e => setIsFeatured(e.target.checked)} />
-                  <label className="text-sm font-medium">Featured Product</label>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-lg font-semibold border-b pb-2 mb-4">Product Images</h2>
-                <div className="space-y-4">
-                  {imageUrls.map((url, idx) => (
-                    <div key={idx} className={`border p-2 rounded relative ${primaryImageIndex === idx ? 'border-purple-500 bg-purple-50' : ''}`}>
-                      <ImageUpload existingUrl={url} onImageUploaded={u => {
-                        const newU = [...imageUrls]; newU[idx] = u; setImageUrls(newU);
-                      }} onRemove={() => {
-                        const newU = imageUrls.filter((_, i) => i !== idx); setImageUrls(newU.length ? newU : ['']);
-                      }} folder="products" />
-                      <button type="button" onClick={() => setPrimaryImageIndex(idx)} className="mt-1 text-[10px] uppercase font-bold text-purple-600">
-                        {primaryImageIndex === idx ? '★ Main Image' : 'Set as Main'}
-                      </button>
-                    </div>
-                  ))}
-                  <Button type="button" variant="outline" className="w-full text-xs" onClick={() => setImageUrls([...imageUrls, ''])}>
-                    + Add Image
-                  </Button>
+                
+                <div className="border-t pt-4 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <input type="checkbox" id="isFeatured" checked={isFeatured} onChange={e => setIsFeatured(e.target.checked)} />
+                    <label htmlFor="isFeatured" className="text-sm font-medium cursor-pointer">{t.productUpload.featureProduct}</label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input type="checkbox" id="isFinalSale" checked={isFinalSale} onChange={e => setIsFinalSale(e.target.checked)} />
+                    <label htmlFor="isFinalSale" className="text-sm font-medium text-red-600 cursor-pointer">{t.productUpload.finalSale}</label>
+                  </div>
                 </div>
               </div>
             </div>

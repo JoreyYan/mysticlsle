@@ -60,79 +60,94 @@ export const translations = {
       step4: '4. 商品激活后会自动显示在前端'
     },
 
-    // 商品上传
+    // 商品上传/编辑
     productUpload: {
       title: '上传商品',
+      editTitle: '编辑商品',
       subtitle: '添加新商品到商店',
       backToDashboard: '返回控制台',
 
-      // 基本信息
-      basicInfo: '基本信息',
+      // 版块标题
+      generalInfo: '基本信息',
+      detailedInfo: '详细信息',
+      inventoryManagement: '库存管理',
+      attributes: '属性设置',
+      pricingLogistics: '价格与物流',
+      productImages: '商品图片',
+
+      // 基本信息字段
       productName: '商品名称',
-      productNamePlaceholder: '例如：霓虹梦幻两件套',
-      urlSlug: 'URL 别名',
-      urlSlugPlaceholder: '例如：neon-dreams-two-piece',
-      urlSlugHint: '可选。如果留空，将自动使用SKU或商品名称生成',
+      productNamePlaceholder: '输入商品名称',
       sku: 'SKU 编号',
       skuPlaceholder: '例如：CFR-NDT-001',
+      urlSlug: 'URL 别名',
+      urlSlugPlaceholder: '留空自动生成',
       shortDescription: '简短描述',
-      shortDescPlaceholder: '一行简短描述',
+      shortDescPlaceholder: '一行简短摘要',
       fullDescription: '完整描述',
       fullDescPlaceholder: '详细商品描述...',
+
+      // 详细描述字段
+      design: '设计理念',
+      designPlaceholder: '描述设计灵感和特点...',
+      shipping: '配送信息',
+      shippingPlaceholder: '例如：现货：48小时内发货...',
+      fitFabric: '材质与尺码',
+      fitFabricPlaceholder: '面料成分和试穿感受...',
+      craftsmanship: '工艺细节',
+      craftsmanshipPlaceholder: '例如：手工缝制水钻...',
+      caring: '洗护指南',
+      caringPlaceholder: '仅冷水手洗...',
+
+      // 属性字段
       category: '分类',
       selectCategory: '选择分类',
+      type: '商品类型',
+      setType: '套装 (上衣 + 下装)',
+      setHint: '启用上衣/下装独立库存拆分',
+      color: '颜色 (单选)',
+      
+      // 库存表格
+      topInventory: '上衣库存',
+      bottomInventory: '下装库存',
+      mainInventory: '主库存',
+      size: '尺码',
+      stock: '库存',
+      priceOverride: '价格覆盖 (选填)',
 
-      // 价格和库存
-      pricingInventory: '价格与库存',
-      price: '价格 (USD)',
-      pricePlaceholder: '79.99',
-      comparePrice: '对比价格 (USD)',
-      comparePricePlaceholder: '99.99',
-      inventoryQuantity: '库存数量',
-      inventoryPlaceholder: '0',
-      trackInventory: '跟踪库存',
-
-      // 图片
-      productImages: '商品图片',
-      imagePlaceholder: '图片 URL',
-      addImageUrl: '添加图片 URL',
-      uploadImage: '上传图片',
-      addImage: '添加图片',
-      clickToUpload: '点击上传图片',
-      imageFormat: 'PNG, JPG, GIF 最大5MB',
-      uploading: '上传中...',
-      imageUploadError: '图片上传失败',
-      setPrimary: '设为主图',
-      primaryImage: '主图',
-      moveUp: '上移',
-      moveDown: '下移',
-      imageOrder: '图片顺序',
-
-      // 变体
-      productVariants: '商品变体',
-      enableVariants: '启用变体',
-      variantColorPlaceholder: '颜色',
-      variantSizePlaceholder: '尺码',
-      variantPricePlaceholder: '价格',
-      variantInventoryPlaceholder: '库存',
-      remove: '移除',
-      addVariant: '添加变体',
-
-      // 状态
+      // 价格字段
+      mainPrice: '主价格 ($)',
+      comparePrice: '对比价格 ($)',
+      compareHint: '显示为划线原价',
+      costPrice: '成本价格 ($)',
+      weight: '重量 (kg)',
+      
+      // 状态开关
       status: '状态',
       productStatus: '商品状态',
       draft: '草稿',
       active: '激活',
       archived: '已归档',
       featureProduct: '设为特色商品',
+      finalSale: '标记为最终销售 (不可退换)',
 
+      // 图片
+      addImage: '添加图片',
+      setPrimary: '设为主图',
+      mainImage: '主图',
+      
       // 按钮
-      createProduct: '创建商品',
-      creating: '创建中...',
+      createProduct: '发布商品',
+      updateProduct: '保存更改',
+      creating: '发布中...',
+      saving: '保存中...',
       cancel: '取消',
 
       // 提示
-      required: '必填'
+      required: '必填',
+      uploadSuccess: '商品发布成功！',
+      updateSuccess: '商品更新成功！',
+      error: '操作失败：'
     },
 
     // 产品管理
@@ -219,12 +234,10 @@ export const translations = {
         title: '筛选',
         clearAll: '清除全部',
         activeFilters: '已选筛选',
-        // 筛选分类
         color: '颜色',
         type: '类型',
         size: '尺码',
         stockStatus: '库存状态',
-        // 颜色选项
         colors: {
           black: '黑色',
           pink: '粉色',
@@ -235,7 +248,6 @@ export const translations = {
           silver: '银色',
           gold: '金色'
         },
-        // 类型选项
         types: {
           sets: '套装',
           tops: '上衣',
@@ -244,7 +256,6 @@ export const translations = {
           accessories: '配饰',
           skirts: '裙装'
         },
-        // 库存状态
         stock: {
           instock: '有货',
           lowstock: '库存不足',
@@ -347,79 +358,94 @@ export const translations = {
       step4: '4. Products will automatically appear on the frontend once active'
     },
 
-    // Product upload
+    // Product upload/edit
     productUpload: {
       title: 'Upload Product',
+      editTitle: 'Edit Product',
       subtitle: 'Add a new product to your store',
       backToDashboard: 'Back to Dashboard',
 
-      // Basic info
-      basicInfo: 'Basic Information',
+      // Section Titles
+      generalInfo: 'General Information',
+      detailedInfo: 'Detailed Information',
+      inventoryManagement: 'Inventory Management',
+      attributes: 'Product Attributes',
+      pricingLogistics: 'Pricing & Logistics',
+      productImages: 'Product Images',
+
+      // General Info Fields
       productName: 'Product Name',
-      productNamePlaceholder: 'e.g., Neon Dreams Two-Piece',
-      urlSlug: 'URL Slug',
-      urlSlugPlaceholder: 'e.g., neon-dreams-two-piece',
-      urlSlugHint: 'Optional. If left empty, will auto-generate from SKU or product name',
+      productNamePlaceholder: 'Enter product name',
       sku: 'SKU',
       skuPlaceholder: 'e.g., CFR-NDT-001',
+      urlSlug: 'URL Slug',
+      urlSlugPlaceholder: 'Auto-generated if empty',
       shortDescription: 'Short Description',
-      shortDescPlaceholder: 'Brief one-line description',
+      shortDescPlaceholder: 'One line summary',
       fullDescription: 'Full Description',
       fullDescPlaceholder: 'Detailed product description...',
+
+      // Detailed Info Fields
+      design: 'DESIGN',
+      designPlaceholder: 'Describe the design inspiration and features...',
+      shipping: 'SHIPPING',
+      shippingPlaceholder: 'e.g. In stock: ships within 48 hours...',
+      fitFabric: 'FIT & FABRIC',
+      fitFabricPlaceholder: 'Material composition and fit notes...',
+      craftsmanship: 'CRAFTMANSHIP',
+      craftsmanshipPlaceholder: 'e.g. Hand-sewn rhinestones...',
+      caring: 'CARING',
+      caringPlaceholder: 'Hand wash in cold water only...',
+
+      // Attributes Fields
       category: 'Category',
-      selectCategory: 'Select a category',
+      selectCategory: 'Select Category',
+      type: 'Type',
+      setType: 'Set (Top + Bottom)',
+      setHint: 'Enables Top & Bottom inventory splitting',
+      color: 'Color (Single Choice)',
 
-      // Pricing & inventory
-      pricingInventory: 'Pricing & Inventory',
-      price: 'Price (USD)',
-      pricePlaceholder: '79.99',
-      comparePrice: 'Compare at Price (USD)',
-      comparePricePlaceholder: '99.99',
-      inventoryQuantity: 'Inventory Quantity',
-      inventoryPlaceholder: '0',
-      trackInventory: 'Track inventory',
+      // Inventory Table
+      topInventory: 'Top Inventory',
+      bottomInventory: 'Bottom Inventory',
+      mainInventory: 'Main Inventory',
+      size: 'Size',
+      stock: 'Stock',
+      priceOverride: 'Price Override',
 
-      // Images
-      productImages: 'Product Images',
-      imagePlaceholder: 'Image URL',
-      addImageUrl: 'Add Image URL',
-      uploadImage: 'Upload Image',
-      addImage: 'Add Image',
-      clickToUpload: 'Click to upload image',
-      imageFormat: 'PNG, JPG, GIF up to 5MB',
-      uploading: 'Uploading...',
-      imageUploadError: 'Image upload failed',
-      setPrimary: 'Set as Primary',
-      primaryImage: 'Primary Image',
-      moveUp: 'Move Up',
-      moveDown: 'Move Down',
-      imageOrder: 'Image Order',
+      // Pricing Fields
+      mainPrice: 'Main Price ($)',
+      comparePrice: 'Compare at Price ($)',
+      compareHint: 'Shows as crossed-out original price',
+      costPrice: 'Cost Price ($)',
+      weight: 'Weight (kg)',
 
-      // Variants
-      productVariants: 'Product Variants',
-      enableVariants: 'Enable variants',
-      variantColorPlaceholder: 'Color',
-      variantSizePlaceholder: 'Size',
-      variantPricePlaceholder: 'Price',
-      variantInventoryPlaceholder: 'Inventory',
-      remove: 'Remove',
-      addVariant: 'Add Variant',
-
-      // Status
+      // Status Switches
       status: 'Status',
       productStatus: 'Product Status',
       draft: 'Draft',
       active: 'Active',
       archived: 'Archived',
-      featureProduct: 'Feature this product',
+      featureProduct: 'Featured Product',
+      finalSale: 'Mark as Final Sale (No Returns)',
+
+      // Images
+      addImage: 'Add Image',
+      setPrimary: 'Set as Main',
+      mainImage: 'Main Image',
 
       // Buttons
-      createProduct: 'Create Product',
-      creating: 'Creating...',
+      createProduct: 'Publish Product',
+      updateProduct: 'Save Changes',
+      creating: 'Publishing...',
+      saving: 'Saving...',
       cancel: 'Cancel',
 
-      // Hints
-      required: 'Required'
+      // Messages
+      required: 'Required',
+      uploadSuccess: 'Product created successfully!',
+      updateSuccess: 'Product updated successfully!',
+      error: 'Operation failed: '
     },
 
     // Product Management
@@ -506,12 +532,10 @@ export const translations = {
         title: 'Filters',
         clearAll: 'Clear All',
         activeFilters: 'Active Filters',
-        // Filter categories
         color: 'Color',
         type: 'Type',
         size: 'Size',
         stockStatus: 'Stock Status',
-        // Color options
         colors: {
           black: 'Black',
           pink: 'Pink',
@@ -522,7 +546,6 @@ export const translations = {
           silver: 'Silver',
           gold: 'Gold'
         },
-        // Type options
         types: {
           sets: 'Sets',
           tops: 'Tops',
@@ -531,7 +554,6 @@ export const translations = {
           accessories: 'Accessories',
           skirts: 'Skirts'
         },
-        // Stock status
         stock: {
           instock: 'In Stock',
           lowstock: 'Low Stock',
@@ -577,6 +599,9 @@ export const translations = {
   }
 }
 
+// React import
+import { useState } from 'react'
+
 // 语言切换 Hook
 export function useLanguage() {
   if (typeof window === 'undefined') {
@@ -604,6 +629,3 @@ export function useLanguage() {
     t: translations[language]
   }
 }
-
-// React import
-import { useState } from 'react'

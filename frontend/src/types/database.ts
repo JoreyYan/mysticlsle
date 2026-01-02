@@ -47,6 +47,16 @@ export interface Product {
   is_active: boolean
   is_featured: boolean
   is_digital: boolean
+  is_final_sale?: boolean // 新增: 是否最终销售
+
+  // 详细描述 (JSONB)
+  details?: {
+    design?: string
+    shipping?: string
+    fabric?: string
+    craftsmanship?: string
+    caring?: string
+  }
 
   // 分类关联
   category_id?: string
