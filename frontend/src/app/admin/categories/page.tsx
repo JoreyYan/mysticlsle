@@ -2,13 +2,12 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { checkAdminSession, createClient } from '@/lib/supabase'
+import { checkAdminSession } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import Link from 'next/link'
 import { ArrowLeft, Plus, Edit, Trash2 } from 'lucide-react'
-
-const supabase = createClient()
 
 interface Category {
   id: string

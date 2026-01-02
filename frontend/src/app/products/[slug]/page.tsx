@@ -45,7 +45,22 @@ export default function ProductPage() {
 
       const productData = response.data
       setProduct(productData)
-      setSelectedImage(productData.featured_image || '')
+      
+      // 优先从 images 数组中获取主图
+      let initialImage = ''
+      if (productData.images && productData.images.length > 0) {
+        // 检查 images 里的元素是对象还是字符串
+        const firstImage = productData.images[0]
+        if (typeof firstImage === 'string') {
+          initialImage = firstImage
+        } else if (typeof firstImage === 'object' && firstImage.image_url) {
+          // 如果有 is_primary 标记的，优先使用
+          const primary = productData.images.find((img: any) => img.is_primary)
+          initialImage = primary ? primary.image_url : firstImage.image_url
+        }
+      }
+      
+      setSelectedImage(initialImage)
 
       if (productData.variants && productData.variants.length > 0) {
         setSelectedVariant(productData.variants[0])
@@ -174,21 +189,24 @@ export default function ProductPage() {
             {/* 缩略图 */}
             {product.images && product.images.length > 0 && (
               <div className="flex gap-2 overflow-x-auto">
-                {[product.featured_image, ...(product.images || [])].filter(Boolean).map((image, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setSelectedImage(image!)}
-                    className={`flex-shrink-0 aspect-square w-20 rounded-lg overflow-hidden border-2 ${
-                      selectedImage === image ? 'border-pink-500' : 'border-gray-200'
-                    }`}
-                  >
-                    <FallbackImage
-                      src={image!}
-                      alt={`${product.name} ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </button>
-                ))}
+                {product.images.map((image: any, index: number) => {
+                  const imageUrl = typeof image === 'string' ? image : image.image_url
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedImage(imageUrl)}
+                      className={`flex-shrink-0 aspect-square w-20 rounded-lg overflow-hidden border-2 ${
+                        selectedImage === imageUrl ? 'border-pink-500' : 'border-gray-200'
+                      }`}
+                    >
+                      <FallbackImage
+                        src={imageUrl}
+                        alt={`${product.name} ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  )
+                })}
               </div>
             )}
           </div>

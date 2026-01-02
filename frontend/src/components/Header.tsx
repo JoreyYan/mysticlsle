@@ -40,47 +40,30 @@ export function Header() {
             </div>
             <Link href="/" className="hidden lg:block">
               <div className="text-2xl font-bold text-pink-200">
-                MysticIsle
+                OpenME
               </div>
             </Link>
           </div>
 
           {/* Center - Main Navigation */}
           <nav className="hidden lg:flex items-center space-x-4 xl:space-x-6">
-            <Link href="/collections/sets" className="text-gray-700 hover:text-gray-900 font-semibold text-xs xl:text-sm uppercase whitespace-nowrap">
-              {t.frontend.nav.sets}
+            <Link href="/collections/lingerie" className="text-gray-700 hover:text-gray-900 font-semibold text-xs xl:text-sm uppercase whitespace-nowrap">
+              {t.frontend.nav.lingerie}
             </Link>
-            <Link href="/collections/new" className="text-gray-700 hover:text-gray-900 font-semibold text-xs xl:text-sm uppercase whitespace-nowrap">
-              {t.frontend.nav.new}
+            <Link href="/collections/teddies" className="text-gray-700 hover:text-gray-900 font-semibold text-xs xl:text-sm uppercase whitespace-nowrap">
+              {t.frontend.nav.teddies}
             </Link>
-            <Link href="/collections/limited" className="text-gray-700 hover:text-gray-900 font-semibold text-xs xl:text-sm uppercase whitespace-nowrap">
-              {t.frontend.nav.limited}
-            </Link>
-            <Link href="/collections/halloween" className="text-gray-700 font-semibold text-xs xl:text-sm uppercase cursor-pointer hover:opacity-80 whitespace-nowrap">
-              <span className="text-green-500">H</span>
-              <span className="text-red-500">A</span>
-              <span className="text-blue-500">L</span>
-              <span className="text-red-500">L</span>
-              <span className="text-yellow-500">O</span>
-              <span className="text-green-500">W</span>
-              <span className="text-red-500">E</span>
-              <span className="text-blue-500">E</span>
-              <span className="text-red-500">N</span>
-            </Link>
-            <Link href="/collections/accessories" className="text-gray-700 hover:text-gray-900 font-semibold text-xs xl:text-sm uppercase whitespace-nowrap">
-              {t.frontend.nav.accessories}
+            <Link href="/collections/nightwear" className="text-gray-700 hover:text-gray-900 font-semibold text-xs xl:text-sm uppercase whitespace-nowrap">
+              {t.frontend.nav.nightwear}
             </Link>
             <Link href="/collections/sale" className="text-gray-700 hover:text-gray-900 font-semibold text-xs xl:text-sm uppercase whitespace-nowrap">
-              {t.frontend.nav.sale}
+              {t.frontend.nav.sales}
             </Link>
-            <Link href="/collections/tops" className="text-gray-700 hover:text-gray-900 font-semibold text-xs xl:text-sm uppercase whitespace-nowrap">
-              {t.frontend.nav.tops}
+            <Link href="/collections/roleplay" className="text-gray-700 hover:text-gray-900 font-semibold text-xs xl:text-sm uppercase whitespace-nowrap">
+              {t.frontend.nav.roleplay}
             </Link>
-            <Link href="/collections/bottoms" className="text-gray-700 hover:text-gray-900 font-semibold text-xs xl:text-sm uppercase whitespace-nowrap">
-              {t.frontend.nav.bottoms}
-            </Link>
-            <Link href="/collections/skirts" className="text-gray-700 hover:text-gray-900 font-semibold text-xs xl:text-sm uppercase whitespace-nowrap">
-              {t.frontend.nav.skirts}
+            <Link href="/collections/panties" className="text-gray-700 hover:text-gray-900 font-semibold text-xs xl:text-sm uppercase whitespace-nowrap">
+              {t.frontend.nav.panties}
             </Link>
             <Link href="/about" className="text-gray-700 hover:text-gray-900 font-semibold text-xs xl:text-sm uppercase whitespace-nowrap">
               {t.frontend.nav.about}
@@ -90,7 +73,7 @@ export function Header() {
           {/* Mobile Logo */}
           <Link href="/" className="lg:hidden">
             <div className="text-lg font-bold text-pink-200">
-              MysticIsle
+              OpenME
             </div>
           </Link>
 

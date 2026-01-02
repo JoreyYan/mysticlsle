@@ -14,7 +14,7 @@ const robotoMono = Roboto_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MysticIsle - You were born to stand out!",
+  title: "OpenME - You were born to stand out!",
   description: "Premium festival fashion and mystical streetwear for the bold and adventurous",
 };
 

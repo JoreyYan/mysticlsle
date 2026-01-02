@@ -8,9 +8,7 @@ import { Product } from '@/types/database'
 import { AnnouncementBar, Header } from '@/components/Header'
 import { ContactSection, Footer } from '@/components/Footer'
 import { FilterSidebar } from '@/components/FilterSidebar'
-import { createClient } from '@/lib/supabase'
-
-const supabase = createClient()
+import { supabase } from '@/lib/supabase'
 
 // 静态示例数据作为后备
 const SAMPLE_PRODUCTS: Product[] = [
@@ -33,7 +31,7 @@ const SAMPLE_PRODUCTS: Product[] = [
     category_id: '1',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
-    meta_title: 'Glitter Butterfly Wings Set - ChillFit Rave',
+    meta_title: 'Glitter Butterfly Wings Set - OpenME',
     meta_description: 'Magical butterfly wings perfect for Halloween and festivals'
   },
   {
@@ -168,7 +166,7 @@ export default function CategoryPage() {
         .from('products')
         .select(`
           *,
-          product_images (
+          product_images!product_images_product_id_fkey (
             id,
             image_url,
             alt_text,

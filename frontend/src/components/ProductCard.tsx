@@ -25,7 +25,19 @@ export default function ProductCard({ product, className = '' }: ProductCardProp
   const getProductImages = () => {
     const images: string[] = []
 
-    if (product.product_images && Array.isArray(product.product_images) && product.product_images.length > 0) {
+    // 1. First check product.images (API v2 standard)
+    if (product.images && Array.isArray(product.images) && product.images.length > 0) {
+      product.images.forEach((img: any) => {
+        if (typeof img === 'string') {
+          images.push(img)
+        } else if (img && img.image_url) {
+          images.push(img.image_url)
+        }
+      })
+    }
+    
+    // 2. Fallback to product.product_images (Legacy or direct DB relation)
+    else if (product.product_images && Array.isArray(product.product_images) && product.product_images.length > 0) {
       // Sort by is_primary first, then by sort_order
       const sortedImages = [...product.product_images].sort((a: any, b: any) => {
         if (a.is_primary && !b.is_primary) return -1

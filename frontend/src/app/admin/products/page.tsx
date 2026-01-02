@@ -9,8 +9,7 @@ import Link from 'next/link'
 import { ArrowLeft, Edit, Trash2, Search, Plus, Eye, EyeOff } from 'lucide-react'
 import { useLanguage } from '@/contexts/LanguageContext'
 import Image from 'next/image'
-
-const supabase = createClient()
+import { supabase } from '@/lib/supabase'
 
 interface Product {
   id: string
@@ -65,7 +64,7 @@ export default function ProductsManagementPage() {
           is_active,
           is_featured,
           created_at,
-          product_images (
+          product_images!product_images_product_id_fkey (
             image_url,
             is_primary
           )

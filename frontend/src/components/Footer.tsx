@@ -14,7 +14,7 @@ export function ContactSection() {
           <div>
             <h5 className="font-semibold text-sm uppercase mb-4">{t.frontend.footer.contactUs}</h5>
             <div className="text-sm space-y-2">
-              <p className="uppercase">{t.frontend.footer.emailUs} <a href="mailto:help@mysticisle.com" className="underline">help@mysticisle.com</a></p>
+              <p className="uppercase">{t.frontend.footer.emailUs} <a href="mailto:help@openme.com" className="underline">help@openme.com</a></p>
               <p className="uppercase">{t.frontend.footer.responseTime}</p>
               <p className="uppercase">{t.frontend.footer.weekdays}</p>
             </div>
@@ -33,10 +33,10 @@ export function ContactSection() {
           <div>
             <h5 className="font-semibold text-sm uppercase mb-4">{t.frontend.footer.followUs}</h5>
             <div className="flex space-x-4">
-              <a href="https://www.instagram.com/mysticisle/" target="_blank" rel="noopener noreferrer">
+              <a href="https://www.instagram.com/openme/" target="_blank" rel="noopener noreferrer">
                 <div className="w-6 h-6 bg-white text-gray-900 flex items-center justify-center text-sm">📸</div>
               </a>
-              <a href="https://www.tiktok.com/@mysticisle" target="_blank" rel="noopener noreferrer">
+              <a href="https://www.tiktok.com/@openme" target="_blank" rel="noopener noreferrer">
                 <div className="w-6 h-6 bg-white text-gray-900 flex items-center justify-center text-sm">🎵</div>
               </a>
             </div>
@@ -100,7 +100,7 @@ export function Footer() {
 
         <div className="border-t border-gray-700 mt-8 pt-8 text-center">
           <p className="text-sm text-gray-400">
-            Copyright © 2025 MysticIsle Inc. {t.frontend.footer.copyright}.
+            Copyright © 2025 OpenME Inc. {t.frontend.footer.copyright}.
           </p>
         </div>
       </div>

@@ -3,176 +3,13 @@ import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
-// 客户端 Supabase 实例
-export const createClient = () => createSupabaseClient(supabaseUrl, supabaseAnonKey)
+// 客户端 Supabase 实例 (单例模式)
+const supabase = createSupabaseClient(supabaseUrl, supabaseAnonKey)
 
-// 数据库类型 (稍后会生成)
-export type Database = {
-  public: {
-    Tables: {
-      categories: {
-        Row: {
-          id: string
-          name: string
-          slug: string
-          description: string | null
-          image_url: string | null
-          parent_id: string | null
-          sort_order: number
-          is_active: boolean
-          meta_title: string | null
-          meta_description: string | null
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          name: string
-          slug: string
-          description?: string | null
-          image_url?: string | null
-          parent_id?: string | null
-          sort_order?: number
-          is_active?: boolean
-          meta_title?: string | null
-          meta_description?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          name?: string
-          slug?: string
-          description?: string | null
-          image_url?: string | null
-          parent_id?: string | null
-          sort_order?: number
-          is_active?: boolean
-          meta_title?: string | null
-          meta_description?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-      }
-      products: {
-        Row: {
-          id: string
-          name: string
-          slug: string
-          description: string | null
-          short_description: string | null
-          sku: string
-          price: number
-          sale_price: number | null
-          cost_price: number | null
-          manage_stock: boolean
-          stock_quantity: number
-          low_stock_threshold: number
-          category_id: string | null
-          is_active: boolean
-          is_featured: boolean
-          is_digital: boolean
-          weight: number | null
-          dimensions: any | null
-          meta_title: string | null
-          meta_description: string | null
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          name: string
-          slug: string
-          description?: string | null
-          short_description?: string | null
-          sku: string
-          price: number
-          sale_price?: number | null
-          cost_price?: number | null
-          manage_stock?: boolean
-          stock_quantity?: number
-          low_stock_threshold?: number
-          category_id?: number | null
-          is_active?: boolean
-          is_featured?: boolean
-          is_digital?: boolean
-          weight?: number | null
-          dimensions?: any | null
-          meta_title?: string | null
-          meta_description?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          name?: string
-          slug?: string
-          description?: string | null
-          short_description?: string | null
-          sku?: string
-          price?: number
-          sale_price?: number | null
-          cost_price?: number | null
-          manage_stock?: boolean
-          stock_quantity?: number
-          low_stock_threshold?: number
-          category_id?: number | null
-          is_active?: boolean
-          is_featured?: boolean
-          is_digital?: boolean
-          weight?: number | null
-          dimensions?: any | null
-          meta_title?: string | null
-          meta_description?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-      }
-      product_images: {
-        Row: {
-          id: number
-          product_id: string
-          image_url: string
-          alt_text: string | null
-          sort_order: number
-          is_primary: boolean
-          file_size: number | null
-          width: number | null
-          height: number | null
-          created_at: string
-        }
-        Insert: {
-          id?: number
-          product_id: string
-          image_url: string
-          alt_text?: string | null
-          sort_order?: number
-          is_primary?: boolean
-          file_size?: number | null
-          width?: number | null
-          height?: number | null
-          created_at?: string
-        }
-        Update: {
-          id?: number
-          product_id?: string
-          image_url?: string
-          alt_text?: string | null
-          sort_order?: number
-          is_primary?: boolean
-          file_size?: number | null
-          width?: number | null
-          height?: number | null
-          created_at?: string
-        }
-      }
-    }
-  }
-}
-
-// API 函数
-const supabase = createClient()
 export { supabase }
+
+// 辅助函数：仅在服务端或特殊需要新实例时使用
+export const createNewClient = () => createSupabaseClient(supabaseUrl, supabaseAnonKey)
 
 // 获取产品列表
 export const getProducts = async (limit = 20) => {
@@ -181,7 +18,7 @@ export const getProducts = async (limit = 20) => {
     .select(`
       *,
       category:categories(name, slug),
-      images:product_images(image_url, alt_text, is_primary, sort_order)
+      images:product_images!product_images_product_id_fkey(image_url, alt_text, is_primary, sort_order)
     `)
     .eq('is_active', true)
     .order('created_at', { ascending: false })
@@ -198,7 +35,7 @@ export const getFeaturedProducts = async () => {
     .select(`
       *,
       category:categories(name, slug),
-      images:product_images(image_url, alt_text, is_primary, sort_order)
+      images:product_images!product_images_product_id_fkey(image_url, alt_text, is_primary, sort_order)
     `)
     .eq('is_active', true)
     .eq('is_featured', true)
@@ -216,7 +53,7 @@ export const getProductBySlug = async (slug: string) => {
     .select(`
       *,
       category:categories(name, slug),
-      images:product_images(image_url, alt_text, is_primary, sort_order)
+      images:product_images!product_images_product_id_fkey(image_url, alt_text, is_primary, sort_order)
     `)
     .eq('slug', slug)
     .eq('is_active', true)
@@ -233,7 +70,7 @@ export const getProductsByCategory = async (categorySlug: string) => {
     .select(`
       *,
       category:categories!inner(name, slug),
-      images:product_images(image_url, alt_text, is_primary, sort_order)
+      images:product_images!product_images_product_id_fkey(image_url, alt_text, is_primary, sort_order)
     `)
     .eq('category.slug', categorySlug)
     .eq('is_active', true)

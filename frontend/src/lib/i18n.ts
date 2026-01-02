@@ -18,14 +18,14 @@ export const translations = {
 
     // 登录页面
     login: {
-      title: 'MysticIsle',
+      title: 'OpenME',
       subtitle: '管理后台',
       email: '邮箱地址',
       password: '密码',
       signIn: '登录',
       loggingIn: '登录中...',
       defaultCredentials: '默认凭据：',
-      emailPlaceholder: 'admin@mysticisle.com',
+      emailPlaceholder: 'admin@openme.com',
       passwordPlaceholder: '••••••••'
     },
 
@@ -204,15 +204,12 @@ export const translations = {
     frontend: {
       // 导航栏
       nav: {
-        sets: '套装',
-        new: '新品',
-        limited: '限量版',
-        halloween: '万圣节',
-        accessories: '配饰',
-        sale: '特价',
-        tops: '上衣',
-        bottoms: '下装',
-        skirts: '裙装',
+        lingerie: '人气文胸',
+        teddies: '连体衣',
+        nightwear: '性感睡衣',
+        sales: '特价',
+        roleplay: '角色扮演',
+        panties: '内裤',
         about: '关于我们'
       },
       // 公告栏
@@ -260,7 +257,7 @@ export const translations = {
         emailUs: '邮箱',
         responseTime: '我们将在24小时内用英文回复您',
         weekdays: '工作日：周一至周五',
-        newsletter: '更多 MYSTICISLE 精彩',
+        newsletter: '更多 OpenME 精彩',
         newsletterDesc: '不错过最新潮流和更新',
         subscribe: '订阅',
         followUs: '关注我们',
@@ -308,20 +305,20 @@ export const translations = {
 
     // Login page
     login: {
-      title: 'MysticIsle',
+      title: 'OpenME',
       subtitle: 'Admin Dashboard',
       email: 'Email Address',
       password: 'Password',
       signIn: 'Sign In',
       loggingIn: 'Logging in...',
       defaultCredentials: 'Default credentials:',
-      emailPlaceholder: 'admin@mysticisle.com',
+      emailPlaceholder: 'admin@openme.com',
       passwordPlaceholder: '••••••••'
     },
 
     // Dashboard
     dashboard: {
-      title: 'MysticIsle Admin',
+      title: 'OpenME Admin',
       welcome: 'Welcome back',
       viewSite: 'View Site',
       logout: 'Logout',
@@ -494,15 +491,12 @@ export const translations = {
     frontend: {
       // Navigation
       nav: {
-        sets: 'SETS',
-        new: 'NEW',
-        limited: 'LIMITED',
-        halloween: 'HALLOWEEN',
-        accessories: 'ACCESSORIES',
-        sale: 'SALE',
-        tops: 'TOPS',
-        bottoms: 'BOTTOMS',
-        skirts: 'SKIRTS',
+        lingerie: 'Lingerie',
+        teddies: 'Teddies',
+        nightwear: 'Nightwear',
+        sales: 'Sales',
+        roleplay: 'RolePlay',
+        panties: 'Panties',
         about: 'ABOUT'
       },
       // Announcement bar
@@ -550,7 +544,7 @@ export const translations = {
         emailUs: 'Email Us:',
         responseTime: 'WE WILL RESPOND TO YOU IN ENGLISH',
         weekdays: 'within 24hours, from monday to friday.',
-        newsletter: 'MORE TO THE BEAT OF MYSTICISLE',
+        newsletter: 'MORE TO THE BEAT OF OpenME',
         newsletterDesc: 'Never miss out the latest trends and get updates',
         subscribe: 'Subscribe',
         followUs: 'Follow Us',

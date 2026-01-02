@@ -7,17 +7,15 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="col-span-1 md:col-span-2">
-            <Link href="/" className="flex items-center mb-4">
-              <span className="text-2xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-orange-400 bg-clip-text text-transparent">
-                MysticIsle
-              </span>
+            <Link href="/" className="text-2xl font-bold tracking-tighter mb-4 block">
+              OpenME
             </Link>
             <p className="text-gray-400 mb-4 max-w-md">
               You were born to stand out! Premium handcrafted festival fashion and party wear for music festivals and late-night parties.
             </p>
-            <p className="text-sm text-gray-500">
-              © 2025 MysticIsle. All rights reserved.
-            </p>
+        <div className="border-t border-white/10 mt-12 pt-8 text-center text-sm text-gray-400">
+          <p>&copy; 2025 OpenME. All rights reserved.</p>
+        </div>
           </div>
 
           {/* Quick Links */}

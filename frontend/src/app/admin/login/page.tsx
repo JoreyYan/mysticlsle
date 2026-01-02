@@ -39,7 +39,7 @@ export default function AdminLoginPage() {
       <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 bg-clip-text text-transparent mb-2">
-            ChillFit Rave
+            OpenME
           </h1>
           <p className="text-gray-600">Admin Dashboard</p>
         </div>
@@ -54,7 +54,7 @@ export default function AdminLoginPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="admin@chillfitrave.com"
+              placeholder="admin@openme.com"
               required
               className="w-full"
             />
@@ -93,7 +93,7 @@ export default function AdminLoginPage() {
         <div className="mt-6 text-center text-sm text-gray-500">
           <p>Default credentials:</p>
           <p className="font-mono text-xs mt-1">
-            Email: admin@chillfitrave.com<br />
+            Email: admin@openme.com<br />
             Password: admin123
           </p>
         </div>

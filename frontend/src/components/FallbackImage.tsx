@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface FallbackImageProps {
   src: string
@@ -17,6 +17,11 @@ export default function FallbackImage({
 }: FallbackImageProps) {
   const [imgSrc, setImgSrc] = useState(src)
   const [hasError, setHasError] = useState(false)
+
+  useEffect(() => {
+    setImgSrc(src)
+    setHasError(false)
+  }, [src])
 
   const handleError = () => {
     if (!hasError) {
