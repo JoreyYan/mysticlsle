@@ -1,14 +1,5 @@
-'use client'
-
-import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
-import { ProductService } from '@/lib/api/products'
-import { Product, ProductVariant } from '@/types/database'
-import FallbackImage from '@/components/FallbackImage'
-import ProductCard from '@/components/ProductCard'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { ShoppingCart, Heart, Share, Star, Plus, Minus, ChevronDown, ChevronUp } from 'lucide-react'
+import { ShoppingCart, Heart, Share, Star, Plus, Minus, ChevronDown, ChevronUp, Check, Loader2 } from 'lucide-react'
+import { useStore } from '@/lib/store'
 
 // 简单的展开/收起组件
 const DetailSection = ({ title, content, defaultOpen = false }: { title: string, content: string | undefined, defaultOpen?: boolean }) => {
@@ -37,6 +28,7 @@ const DetailSection = ({ title, content, defaultOpen = false }: { title: string,
 export default function ProductPage() {
   const params = useParams()
   const productSlug = params.slug as string
+  const { addToCart, wishlist, toggleWishlist, user } = useStore()
 
   const [product, setProduct] = useState<Product | null>(null)
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([])
@@ -55,6 +47,8 @@ export default function ProductPage() {
   const [quantity, setQuantity] = useState(1)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [isAdding, setIsAdding] = useState(false)
+  const [addedToCart, setAddedToCart] = useState(false)
 
   useEffect(() => {
     loadProduct()
@@ -83,26 +77,19 @@ export default function ProductPage() {
           initialImage = firstImage
         } else if (typeof firstImage === 'object' && firstImage.image_url) {
           const primary = productData.images.find((img: any) => img.is_primary)
-          initialImage = primary ? primary.image_url : firstImage.image_url
+          initialImage = primary ? primary.image_url : (firstImage as any).image_url
         }
       }
       setSelectedImage(initialImage)
 
       // Variants processing
-      console.log('Raw variants:', productData.variants) // Debug log
-
       if (productData.variants && productData.variants.length > 0) {
         if (productData.product_type === 'set') {
           const tops = productData.variants.filter((v: any) => v.part === 'top')
           const bottoms = productData.variants.filter((v: any) => v.part === 'bottom')
-          
-          console.log('Top variants:', tops)
-          console.log('Bottom variants:', bottoms)
-
           setVariantsTop(tops)
           setVariantsBottom(bottoms)
         } else {
-          // Regular product
           const mains = productData.variants.filter((v: any) => !v.part || v.part === 'main')
           setVariantsMain(mains)
           setSelectedMain(mains.find(v => v.inventory_quantity > 0) || mains[0])
@@ -127,12 +114,53 @@ export default function ProductPage() {
   }
 
   const handleAddToCart = () => {
-    if (product?.product_type === 'set') {
-      console.log('Add Set to cart:', { product, top: selectedTop, bottom: selectedBottom, quantity })
-    } else {
-      console.log('Add Item to cart:', { product, variant: selectedMain, quantity })
+    if (!product) return
+    setIsAdding(true)
+
+    const cartItemBase = {
+      product_id: product.id,
+      quantity: quantity,
+      product_data: {
+        name: product.name,
+        price: currentPrice,
+        image: selectedImage
+      }
     }
+
+    if (product.product_type === 'set') {
+      if (!selectedTop || !selectedBottom) {
+        alert('Please select both Top and Bottom sizes')
+        setIsAdding(false)
+        return
+      }
+      addToCart({
+        ...cartItemBase,
+        top_variant_id: Number(selectedTop.id),
+        bottom_variant_id: Number(selectedBottom.id)
+      })
+    } else {
+      if (!selectedMain) {
+        alert('Please select a size')
+        setIsAdding(false)
+        return
+      }
+      addToCart({
+        ...cartItemBase,
+        variant_id: Number(selectedMain.id)
+      })
+    }
+
+    setAddedToCart(true)
+    setIsAdding(false)
+    setTimeout(() => setAddedToCart(false), 2000)
   }
+
+  const handleWishlistToggle = () => {
+    if (!product) return
+    toggleWishlist(product.id)
+  }
+
+  const isWishlisted = product ? wishlist.includes(product.id) : false
 
   // Helper to determine pricing and availability
   const isSet = product?.product_type === 'set'
@@ -330,15 +358,26 @@ export default function ProductPage() {
                 </div>
                 <Button
                   onClick={handleAddToCart}
-                  disabled={isSoldOut}
-                  className="flex-1 bg-black text-white hover:bg-gray-800 h-12 rounded-none uppercase tracking-widest text-xs font-bold"
+                  disabled={isSoldOut || isAdding}
+                  className={`flex-1 h-12 rounded-none uppercase tracking-widest text-xs font-bold transition-all ${
+                    addedToCart ? 'bg-green-600 hover:bg-green-700' : 'bg-black text-white hover:bg-gray-800'
+                  }`}
                 >
-                  {isSoldOut ? 'Sold Out / Select Size' : 'Add to Cart'}
+                  {isAdding ? <Loader2 className="w-4 h-4 animate-spin" /> : 
+                   addedToCart ? <><Check className="w-4 h-4 mr-2" /> Added</> :
+                   isSoldOut ? 'Sold Out / Select Size' : 'Add to Cart'}
                 </Button>
               </div>
               <div className="flex gap-4">
-                <Button variant="outline" className="flex-1 h-10 rounded-none border-gray-200 text-xs uppercase tracking-wide">
-                  <Heart className="w-3 h-3 mr-2" /> Add to Wishlist
+                <Button 
+                  variant="outline" 
+                  className={`flex-1 h-10 rounded-none border-gray-200 text-xs uppercase tracking-wide transition-colors ${
+                    isWishlisted ? 'text-pink-600 border-pink-100 bg-pink-50' : ''
+                  }`}
+                  onClick={handleWishlistToggle}
+                >
+                  <Heart className={`w-3 h-3 mr-2 ${isWishlisted ? 'fill-current' : ''}`} /> 
+                  {isWishlisted ? 'In Wishlist' : 'Add to Wishlist'}
                 </Button>
               </div>
             </div>
