@@ -333,7 +333,23 @@ export default function ProductUploadPage() {
               {/* Image Section is NOW AT TOP */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h2 className="text-lg font-semibold border-b pb-2 mb-4">{t.productUpload.productImages}</h2>
-                <div className="space-y-4">
+                
+                {/* 批量上传按钮 */}
+                <div className="mb-6">
+                  <ImageUpload 
+                    multiple={true} 
+                    onImagesUploaded={(urls) => {
+                      const existingUrls = imageUrls.filter(u => u.trim() !== '')
+                      setImageUrls([...existingUrls, ...urls, ''])
+                    }}
+                    onImageUploaded={() => {}}
+                    folder="products"
+                  />
+                  <p className="text-[10px] text-gray-500 mt-2 text-center italic">Tip: You can select multiple files at once to speed up</p>
+                </div>
+
+                <div className="space-y-4 border-t pt-6">
+                  <h3 className="text-xs font-bold uppercase text-gray-400 mb-2">Manage Images</h3>
                   {imageUrls.map((url, idx) => (
                     <div key={idx} className={`border p-2 rounded relative ${primaryImageIndex === idx ? 'border-purple-500 bg-purple-50' : ''}`}>
                       <ImageUpload existingUrl={url} onImageUploaded={u => {
