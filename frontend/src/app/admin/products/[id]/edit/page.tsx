@@ -9,7 +9,6 @@ import Link from 'next/link'
 import { ArrowLeft, Plus, ChevronUp, ChevronDown, Star, RefreshCw, Trash2, Shirt, Scissors } from 'lucide-react'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { ImageUpload } from '@/components/ImageUpload'
-import { supabase } from '@/lib/supabase'
 import { InventoryTable } from '@/components/admin/InventoryTable'
 
 // 预定义常量
@@ -378,59 +377,29 @@ export default function ProductEditPage({ params }: PageProps) {
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-4">
                 <h2 className="text-lg font-semibold border-b pb-2">{t.productUpload.detailedInfo}</h2>
                 
-                <div>
-                  <label className="block text-sm font-medium mb-1">{t.productUpload.design}</label>
-                  <textarea 
-                    className="w-full p-2 border border-gray-200 rounded-md text-sm min-h-[80px]" 
-                    rows={4}
-                    value={detailDesign}
-                    onChange={e => setDetailDesign(e.target.value)}
-                    placeholder={t.productUpload.designPlaceholder}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-1">{t.productUpload.shipping}</label>
-                  <textarea 
-                    className="w-full p-2 border border-gray-200 rounded-md text-sm" 
-                    rows={2}
-                    value={detailShipping}
-                    onChange={e => setDetailShipping(e.target.value)}
-                    placeholder={t.productUpload.shippingPlaceholder}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-1">{t.productUpload.fitFabric}</label>
-                  <textarea 
-                    className="w-full p-2 border border-gray-200 rounded-md text-sm" 
-                    rows={4}
-                    value={detailFabric}
-                    onChange={e => setDetailFabric(e.target.value)}
-                    placeholder={t.productUpload.fitFabricPlaceholder}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-1">{t.productUpload.craftsmanship}</label>
-                  <textarea 
-                    className="w-full p-2 border border-gray-200 rounded-md text-sm" 
-                    rows={2}
-                    value={detailCraftsmanship}
-                    onChange={e => setDetailCraftsmanship(e.target.value)}
-                    placeholder={t.productUpload.craftsmanshipPlaceholder}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-1">{t.productUpload.caring}</label>
-                  <textarea 
-                    className="w-full p-2 border border-gray-200 rounded-md text-sm" 
-                    rows={3}
-                    value={detailCaring}
-                    onChange={e => setDetailCaring(e.target.value)}
-                    placeholder={t.productUpload.caringPlaceholder}
-                  />
+                <div className="grid grid-cols-1 gap-4">
+                  {['DESIGN', 'SHIPPING', 'FIT & FABRIC', 'CRAFTMANSHIP', 'CARING'].map(section => (
+                    <div key={section}>
+                      <label className="block text-xs font-bold text-gray-500 mb-1">{section}</label>
+                      <textarea 
+                        className="w-full p-2 border border-gray-200 rounded-md text-sm min-h-[80px]" 
+                        value={
+                          section === 'DESIGN' ? detailDesign :
+                          section === 'SHIPPING' ? detailShipping :
+                          section === 'FIT & FABRIC' ? detailFabric :
+                          section === 'CRAFTMANSHIP' ? detailCraftsmanship : detailCaring
+                        }
+                        onChange={e => {
+                          const val = e.target.value;
+                          if (section === 'DESIGN') setDetailDesign(val);
+                          else if (section === 'SHIPPING') setDetailShipping(val);
+                          else if (section === 'FIT & FABRIC') setDetailFabric(val);
+                          else if (section === 'CRAFTMANSHIP') setDetailCraftsmanship(val);
+                          else setDetailCaring(val);
+                        }}
+                      />
+                    </div>
+                  ))}
                 </div>
               </div>
 

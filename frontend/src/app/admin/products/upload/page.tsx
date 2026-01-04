@@ -9,7 +9,6 @@ import Link from 'next/link'
 import { ArrowLeft, Plus, Star, Shirt, Scissors } from 'lucide-react'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { ImageUpload } from '@/components/ImageUpload'
-import { supabase } from '@/lib/supabase'
 import { InventoryTable } from '@/components/admin/InventoryTable'
 
 // 预定义常量
@@ -224,6 +223,21 @@ export default function ProductUploadPage() {
     }
   }
 
+  const updateImageUrl = (index: number, value: string) => {
+    const newUrls = [...imageUrls]
+    newUrls[index] = value
+    setImageUrls(newUrls)
+  }
+
+  const removeImageUrl = (index: number) => {
+    const newUrls = imageUrls.filter((_, i) => i !== index)
+    setImageUrls(newUrls.length ? newUrls : [''])
+    if (index === primaryImageIndex) setPrimaryImageIndex(0)
+    else if (index < primaryImageIndex) setPrimaryImageIndex(primaryImageIndex - 1)
+  }
+
+  const setPrimary = (index: number) => setPrimaryImageIndex(index)
+
   const PRODUCT_TYPES_TRANSLATED = [
     { label: t.productUpload.setType, value: 'set' },
     { label: 'Top', value: 'top' },
@@ -250,6 +264,7 @@ export default function ProductUploadPage() {
         <form className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
+            {/* Left Column */}
             <div className="lg:col-span-2 space-y-8">
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-4">
                 <h2 className="text-lg font-semibold border-b pb-2">{t.productUpload.generalInfo}</h2>
