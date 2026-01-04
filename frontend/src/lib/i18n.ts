@@ -135,6 +135,9 @@ export const translations = {
       addImage: '添加图片',
       setPrimary: '设为主图',
       mainImage: '主图',
+      uploading: '正在上传...',
+      clickToUpload: '点击上传图片',
+      imageFormat: 'PNG, JPG, GIF 最大5MB',
       
       // 按钮
       createProduct: '发布商品',
@@ -433,6 +436,9 @@ export const translations = {
       addImage: 'Add Image',
       setPrimary: 'Set as Main',
       mainImage: 'Main Image',
+      uploading: 'Uploading...',
+      clickToUpload: 'Click to upload image',
+      imageFormat: 'PNG, JPG, GIF up to 5MB',
 
       // Buttons
       createProduct: 'Publish Product',

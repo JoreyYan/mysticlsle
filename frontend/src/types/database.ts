@@ -48,6 +48,7 @@ export interface Product {
   is_featured: boolean
   is_digital: boolean
   is_final_sale?: boolean // 新增: 是否最终销售
+  product_type?: 'set' | 'top' | 'bottom' | 'accessory' | 'other'
 
   // 详细描述 (JSONB)
   details?: {
@@ -102,6 +103,10 @@ export interface ProductVariant {
   option3_name?: string
   option3_value?: string
 
+  // 快捷字段
+  color?: string
+  size?: string
+
   // 变体图片
   image_url?: string
 
@@ -112,6 +117,7 @@ export interface ProductVariant {
   sort_order: number
   created_at: string
   updated_at: string
+  part?: 'main' | 'top' | 'bottom'
 }
 
 export interface ProductTag {
@@ -196,10 +202,13 @@ export interface ProductFilters {
 // 购物车项目类型
 export interface CartItem {
   product_id: string
-  variant_id?: string
+  variant_id?: number
+  top_variant_id?: number
+  bottom_variant_id?: number
   quantity: number
-  product: Product
+  product?: Product
   variant?: ProductVariant
+  product_data?: any
 }
 
 // 订单相关类型（为未来扩展预留）
