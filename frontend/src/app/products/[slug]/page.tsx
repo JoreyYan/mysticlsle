@@ -1,5 +1,17 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
+import { ProductService } from '@/lib/api/products'
+import { Product, ProductVariant } from '@/types/database'
+import FallbackImage from '@/components/FallbackImage'
+import ProductCard from '@/components/ProductCard'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { ShoppingCart, Heart, Share, Star, Plus, Minus, ChevronDown, ChevronUp, Check, Loader2 } from 'lucide-react'
 import { useStore } from '@/lib/store'
+import { AnnouncementBar, Header } from '@/components/Header'
+import { ContactSection, Footer } from '@/components/Footer'
 
 // 简单的展开/收起组件
 const DetailSection = ({ title, content, defaultOpen = false }: { title: string, content: string | undefined, defaultOpen?: boolean }) => {
@@ -75,8 +87,8 @@ export default function ProductPage() {
         const firstImage = productData.images[0]
         if (typeof firstImage === 'string') {
           initialImage = firstImage
-        } else if (typeof firstImage === 'object' && firstImage.image_url) {
-          const primary = productData.images.find((img: any) => img.is_primary)
+        } else if (typeof firstImage === 'object' && (firstImage as any).image_url) {
+          const primary = (productData.images as any[]).find((img: any) => img.is_primary)
           initialImage = primary ? primary.image_url : (firstImage as any).image_url
         }
       }
@@ -194,6 +206,8 @@ export default function ProductPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      <AnnouncementBar />
+      <Header />
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Breadcrumbs */}
         <nav className="text-xs text-gray-500 mb-8 uppercase tracking-wide">
@@ -411,6 +425,8 @@ export default function ProductPage() {
           </div>
         )}
       </div>
+      <ContactSection />
+      <Footer />
     </div>
   )
 }
