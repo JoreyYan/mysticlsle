@@ -3,8 +3,17 @@
 import { Button } from '@/components/ui/button'
 import { useLanguage } from '@/contexts/LanguageContext'
 
-export function ContactSection() {
+interface FooterProps {
+  settings?: Record<string, string>
+}
+
+export function ContactSection({ settings }: FooterProps = {}) {
   const { t } = useLanguage()
+
+  // Get contact email from settings or use default
+  const contactEmail = settings?.['contact_email'] || 'help@openme.com'
+  const instagramUrl = settings?.['instagram_url'] || 'https://www.instagram.com/openme/'
+  const tiktokUrl = settings?.['tiktok_url'] || 'https://www.tiktok.com/@openme'
 
   return (
     <section className="py-16 bg-gray-900 text-white">
@@ -14,7 +23,7 @@ export function ContactSection() {
           <div>
             <h5 className="font-semibold text-sm uppercase mb-4">{t.frontend.footer.contactUs}</h5>
             <div className="text-sm space-y-2">
-              <p className="uppercase">{t.frontend.footer.emailUs} <a href="mailto:help@openme.com" className="underline">help@openme.com</a></p>
+              <p className="uppercase">{t.frontend.footer.emailUs} <a href={`mailto:${contactEmail}`} className="underline">{contactEmail}</a></p>
               <p className="uppercase">{t.frontend.footer.responseTime}</p>
               <p className="uppercase">{t.frontend.footer.weekdays}</p>
             </div>
@@ -33,11 +42,11 @@ export function ContactSection() {
           <div>
             <h5 className="font-semibold text-sm uppercase mb-4">{t.frontend.footer.followUs}</h5>
             <div className="flex space-x-4">
-              <a href="https://www.instagram.com/openme/" target="_blank" rel="noopener noreferrer">
-                <div className="w-6 h-6 bg-white text-gray-900 flex items-center justify-center text-sm">📸</div>
+              <a href={instagramUrl} target="_blank" rel="noopener noreferrer">
+                <div className="w-6 h-6 bg-white text-gray-900 flex items-center justify-center text-sm rounded">IG</div>
               </a>
-              <a href="https://www.tiktok.com/@openme" target="_blank" rel="noopener noreferrer">
-                <div className="w-6 h-6 bg-white text-gray-900 flex items-center justify-center text-sm">🎵</div>
+              <a href={tiktokUrl} target="_blank" rel="noopener noreferrer">
+                <div className="w-6 h-6 bg-white text-gray-900 flex items-center justify-center text-sm rounded">TT</div>
               </a>
             </div>
           </div>
@@ -47,8 +56,12 @@ export function ContactSection() {
   )
 }
 
-export function Footer() {
+export function Footer({ settings }: FooterProps = {}) {
   const { t } = useLanguage()
+
+  // Get copyright from settings or use default
+  const copyright = settings?.['footer_copyright'] || `Copyright © ${new Date().getFullYear()} OpenME Inc.`
+  const instagramUrl = settings?.['instagram_url'] || 'https://www.instagram.com/mysticisle/'
 
   return (
     <footer className="bg-gray-900 text-white py-8">
@@ -85,7 +98,7 @@ export function Footer() {
               <li><a href="/about?menu=social" className="hover:underline">{t.frontend.footer.social}</a></li>
               <li><a href="/about?menu=wholesale" className="hover:underline">{t.frontend.footer.wholesale}</a></li>
               <li><a href="/about?menu=newsletter" className="hover:underline">{t.frontend.footer.newsletterBenefits}</a></li>
-              <li><a href="https://www.instagram.com/mysticisle/" target="_blank" className="hover:underline">{t.frontend.footer.instagram}</a></li>
+              <li><a href={instagramUrl} target="_blank" className="hover:underline">{t.frontend.footer.instagram}</a></li>
             </ul>
           </div>
 
@@ -100,7 +113,7 @@ export function Footer() {
 
         <div className="border-t border-gray-700 mt-8 pt-8 text-center">
           <p className="text-sm text-gray-400">
-            Copyright © 2025 OpenME Inc. {t.frontend.footer.copyright}.
+            {copyright} {t.frontend.footer.copyright}.
           </p>
         </div>
       </div>

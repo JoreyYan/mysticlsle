@@ -111,9 +111,11 @@ export default function CartPage() {
                     <span className="text-xl font-bold">${subtotal.toFixed(2)}</span>
                   </div>
                   
-                  <Button className="w-full bg-black text-white h-12 uppercase tracking-widest font-bold hover:bg-gray-800 rounded-none">
-                    Checkout Now
-                  </Button>
+                  <Link href="/checkout">
+                    <Button className="w-full bg-black text-white h-12 uppercase tracking-widest font-bold hover:bg-gray-800 rounded-none">
+                      Checkout Now
+                    </Button>
+                  </Link>
                   
                   <p className="text-[10px] text-gray-400 mt-4 text-center leading-relaxed italic">
                     KLARNA AND AFTERPAY AVAILABLE AT NEXT STEP.

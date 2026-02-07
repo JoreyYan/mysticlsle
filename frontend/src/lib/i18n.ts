@@ -57,7 +57,11 @@ export const translations = {
       step1: '1. 首先，设置分类来组织商品',
       step2: '2. 上传商品图片和详情，包括变体（颜色、尺码）',
       step3: '3. 为每个商品设置价格和库存',
-      step4: '4. 商品激活后会自动显示在前端'
+      step4: '4. 商品激活后会自动显示在前端',
+
+      // 主页配置
+      homepageConfig: '主页配置',
+      homepageConfigDesc: '自定义主页的横幅、区块和网站设置。'
     },
 
     // 商品上传/编辑
@@ -218,6 +222,92 @@ export const translations = {
       updateSuccess: '分类更新成功！'
     },
 
+    // 主页配置管理
+    homepage: {
+      title: '主页配置',
+      subtitle: '管理主页横幅、区块和设置',
+      backToDashboard: '返回控制台',
+
+      // 标签页
+      tabs: {
+        banners: '横幅',
+        sections: '区块',
+        settings: '设置'
+      },
+
+      // 横幅编辑
+      banners: {
+        mainBanner: '主横幅',
+        secondaryBanner: '二级横幅',
+        shippingBanner: '配送横幅',
+        desktopImage: '桌面端图片',
+        mobileImage: '移动端图片',
+        linkUrl: '链接地址',
+        linkUrlPlaceholder: '例如：/collections/halloween',
+        altText: '图片描述',
+        altTextPlaceholder: '描述图片内容...',
+        button1: '按钮 1',
+        button2: '按钮 2',
+        buttonText: '按钮文字',
+        buttonTextPlaceholder: '例如：立即购买',
+        buttonLink: '按钮链接',
+        buttonLinkPlaceholder: '/collections/...',
+        uploadDesktop: '上传桌面端图片',
+        uploadMobile: '上传移动端图片'
+      },
+
+      // 区块编辑
+      sections: {
+        addSection: '添加区块',
+        editSection: '编辑区块',
+        sectionKey: '区块标识',
+        sectionKeyPlaceholder: '例如：halloween_shop',
+        title: '标题',
+        titlePlaceholder: '区块标题',
+        titleZh: '标题（中文）',
+        content: '内容',
+        contentPlaceholder: '区块内容/诗句...',
+        contentZh: '内容（中文）',
+        buttonText: '按钮文字',
+        buttonTextZh: '按钮文字（中文）',
+        buttonLink: '按钮链接',
+        imageUrl: '图片地址',
+        bgColor: '背景色',
+        sortOrder: '排序',
+        isActive: '激活',
+        noSections: '暂无区块，点击添加新区块',
+        deleteConfirm: '确定要删除这个区块吗？'
+      },
+
+      // 设置编辑
+      settings: {
+        announcement: '公告栏',
+        announcementText: '公告文字（英文）',
+        announcementTextZh: '公告文字（中文）',
+        announcementBgColor: '公告背景色',
+        announcementEnabled: '显示公告栏',
+
+        contact: '联系信息',
+        contactEmail: '联系邮箱',
+        responseTime: '响应时间（小时）',
+
+        social: '社交媒体',
+        instagramUrl: 'Instagram 链接',
+        tiktokUrl: 'TikTok 链接',
+
+        footer: '页脚',
+        footerCopyright: '版权信息'
+      },
+
+      // 通用
+      saveChanges: '保存更改',
+      saving: '保存中...',
+      saveSuccess: '保存成功！',
+      saveError: '保存失败：',
+      english: '英文',
+      chinese: '中文'
+    },
+
     // 前端页面翻译
     frontend: {
       // 导航栏
@@ -358,7 +448,11 @@ export const translations = {
       step1: '1. First, set up your categories to organize your products',
       step2: '2. Upload product images and details including variants (colors, sizes)',
       step3: '3. Set pricing and inventory for each product',
-      step4: '4. Products will automatically appear on the frontend once active'
+      step4: '4. Products will automatically appear on the frontend once active',
+
+      // Homepage configuration
+      homepageConfig: 'Homepage Config',
+      homepageConfigDesc: 'Customize banners, sections, and site settings for the homepage.'
     },
 
     // Product upload/edit
@@ -517,6 +611,92 @@ export const translations = {
       deleteSuccess: 'Category deleted successfully!',
       createSuccess: 'Category created successfully!',
       updateSuccess: 'Category updated successfully!'
+    },
+
+    // Homepage Configuration
+    homepage: {
+      title: 'Homepage Configuration',
+      subtitle: 'Manage homepage banners, sections, and settings',
+      backToDashboard: 'Back to Dashboard',
+
+      // Tabs
+      tabs: {
+        banners: 'Banners',
+        sections: 'Sections',
+        settings: 'Settings'
+      },
+
+      // Banner editing
+      banners: {
+        mainBanner: 'Main Banner',
+        secondaryBanner: 'Secondary Banner',
+        shippingBanner: 'Shipping Banner',
+        desktopImage: 'Desktop Image',
+        mobileImage: 'Mobile Image',
+        linkUrl: 'Link URL',
+        linkUrlPlaceholder: 'e.g., /collections/halloween',
+        altText: 'Alt Text',
+        altTextPlaceholder: 'Describe the image...',
+        button1: 'Button 1',
+        button2: 'Button 2',
+        buttonText: 'Button Text',
+        buttonTextPlaceholder: 'e.g., Shop Now',
+        buttonLink: 'Button Link',
+        buttonLinkPlaceholder: '/collections/...',
+        uploadDesktop: 'Upload Desktop Image',
+        uploadMobile: 'Upload Mobile Image'
+      },
+
+      // Section editing
+      sections: {
+        addSection: 'Add Section',
+        editSection: 'Edit Section',
+        sectionKey: 'Section Key',
+        sectionKeyPlaceholder: 'e.g., halloween_shop',
+        title: 'Title',
+        titlePlaceholder: 'Section title',
+        titleZh: 'Title (Chinese)',
+        content: 'Content',
+        contentPlaceholder: 'Section content/poem...',
+        contentZh: 'Content (Chinese)',
+        buttonText: 'Button Text',
+        buttonTextZh: 'Button Text (Chinese)',
+        buttonLink: 'Button Link',
+        imageUrl: 'Image URL',
+        bgColor: 'Background Color',
+        sortOrder: 'Sort Order',
+        isActive: 'Active',
+        noSections: 'No sections yet. Click to add a new section.',
+        deleteConfirm: 'Are you sure you want to delete this section?'
+      },
+
+      // Settings editing
+      settings: {
+        announcement: 'Announcement Bar',
+        announcementText: 'Announcement Text (English)',
+        announcementTextZh: 'Announcement Text (Chinese)',
+        announcementBgColor: 'Announcement Background Color',
+        announcementEnabled: 'Show Announcement Bar',
+
+        contact: 'Contact Information',
+        contactEmail: 'Contact Email',
+        responseTime: 'Response Time (hours)',
+
+        social: 'Social Media',
+        instagramUrl: 'Instagram URL',
+        tiktokUrl: 'TikTok URL',
+
+        footer: 'Footer',
+        footerCopyright: 'Copyright Text'
+      },
+
+      // Common
+      saveChanges: 'Save Changes',
+      saving: 'Saving...',
+      saveSuccess: 'Saved successfully!',
+      saveError: 'Save failed: ',
+      english: 'English',
+      chinese: 'Chinese'
     },
 
     // Frontend page translations

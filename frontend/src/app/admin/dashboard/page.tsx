@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { checkAdminSession, clearAdminSession } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { Package, FolderTree, Upload, LogOut, BarChart3 } from 'lucide-react'
+import { Package, FolderTree, Upload, LogOut, BarChart3, LayoutDashboard } from 'lucide-react'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 import { useLanguage } from '@/contexts/LanguageContext'
 
@@ -167,6 +167,21 @@ export default function AdminDashboard() {
               </div>
               <p className="text-gray-600 text-sm">
                 {t.dashboard.manageCategoriesDesc}
+              </p>
+            </div>
+          </Link>
+
+          {/* Homepage Configuration */}
+          <Link href="/admin/homepage">
+            <div className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-6 cursor-pointer group">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="bg-blue-100 group-hover:bg-blue-200 transition-colors p-3 rounded-lg">
+                  <LayoutDashboard className="h-6 w-6 text-blue-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900">{t.dashboard.homepageConfig || 'Homepage Config'}</h3>
+              </div>
+              <p className="text-gray-600 text-sm">
+                {t.dashboard.homepageConfigDesc || 'Customize banners, sections, and site settings for the homepage.'}
               </p>
             </div>
           </Link>
