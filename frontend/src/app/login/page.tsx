@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { useStore } from '@/lib/store'
 import { Button } from '@/components/ui/button'
@@ -11,8 +11,10 @@ import { AnnouncementBar, Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { Loader2, Mail, Lock, User } from 'lucide-react'
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get('redirect') || '/account'
   const { setUser } = useStore()
   const [isLogin, setIsLogin] = useState(true)
   const [loading, setLoading] = useState(false)
@@ -38,7 +40,7 @@ export default function LoginPage() {
         if (authError) throw authError
         if (data.user) {
           setUser({ id: data.user.id, email: data.user.email })
-          router.push('/account')
+          router.push(redirectTo)
         }
       } else {
         // Sign Up
@@ -148,5 +150,22 @@ export default function LoginPage() {
       </div>
       <Footer />
     </>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <>
+        <AnnouncementBar />
+        <Header />
+        <div className="min-h-[80vh] flex items-center justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+        </div>
+        <Footer />
+      </>
+    }>
+      <LoginContent />
+    </Suspense>
   )
 }

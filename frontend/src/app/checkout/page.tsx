@@ -47,11 +47,16 @@ function CheckoutContent() {
   const total = subtotal + shippingCost + tax
 
   useEffect(() => {
+    // 必须登录才能结账
+    if (!user) {
+      router.push('/login?redirect=/checkout')
+      return
+    }
     // 如果购物车为空且不是订单完成状态，跳转回购物车
     if (cart.length === 0 && !orderComplete) {
       router.push('/cart')
     }
-    // 如果已登录，预填邮箱
+    // 预填邮箱
     if (user?.email) {
       setEmail(user.email)
     }

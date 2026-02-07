@@ -4,12 +4,12 @@ import { useStore } from '@/lib/store'
 import { AnnouncementBar, Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { Button } from '@/components/ui/button'
-import { Trash2, Plus, Minus, ArrowLeft, ShoppingBag } from 'lucide-react'
+import { Trash2, Plus, Minus, ArrowLeft, ShoppingBag, User } from 'lucide-react'
 import Link from 'next/link'
 import FallbackImage from '@/components/FallbackImage'
 
 export default function CartPage() {
-  const { cart, removeFromCart, updateQuantity } = useStore()
+  const { cart, removeFromCart, updateQuantity, user } = useStore()
 
   const subtotal = cart.reduce((total, item) => {
     return total + (item.product_data?.price || 0) * item.quantity
@@ -110,13 +110,27 @@ export default function CartPage() {
                     <span className="uppercase tracking-widest text-xs font-bold">Estimated Total</span>
                     <span className="text-xl font-bold">${subtotal.toFixed(2)}</span>
                   </div>
-                  
-                  <Link href="/checkout">
-                    <Button className="w-full bg-black text-white h-12 uppercase tracking-widest font-bold hover:bg-gray-800 rounded-none">
-                      Checkout Now
-                    </Button>
-                  </Link>
-                  
+
+                  {user ? (
+                    <Link href="/checkout">
+                      <Button className="w-full bg-black text-white h-12 uppercase tracking-widest font-bold hover:bg-gray-800 rounded-none">
+                        Checkout Now
+                      </Button>
+                    </Link>
+                  ) : (
+                    <>
+                      <Link href="/login?redirect=/checkout">
+                        <Button className="w-full bg-black text-white h-12 uppercase tracking-widest font-bold hover:bg-gray-800 rounded-none flex items-center justify-center gap-2">
+                          <User className="w-4 h-4" />
+                          Login to Checkout
+                        </Button>
+                      </Link>
+                      <p className="text-xs text-gray-500 mt-3 text-center">
+                        Please login or create an account to complete your purchase.
+                      </p>
+                    </>
+                  )}
+
                   <p className="text-[10px] text-gray-400 mt-4 text-center leading-relaxed italic">
                     KLARNA AND AFTERPAY AVAILABLE AT NEXT STEP.
                   </p>
